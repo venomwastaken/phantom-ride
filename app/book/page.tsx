@@ -21,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { formSchema } from "@/lib/validator";
 import Dropdown from "@/components/Dropdown";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getSeats } from "@/lib/actions/bus.action";
 import { initializeTransaction } from "@/lib/actions/payment.action";
@@ -173,6 +173,7 @@ export default function ProfileForm() {
   return (
     <>
       <Navbar/>
+      <Suspense>
       <div className={`${styles.bookingContainer} wrapper`}>
         <div className={`${styles.busSeats} ${styles.cardForm}`}>
           <div className={styles.col}>
@@ -438,6 +439,7 @@ export default function ProfileForm() {
           </div>
         </Form>
       </div>
+      </Suspense>
     </>
   );
 }
