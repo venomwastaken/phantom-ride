@@ -1,37 +1,37 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+// app/api/webhooks/paystack/route.ts
+import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 
 const secret = process.env.SECRET_KEY!;
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'POST') {
-    try {
-      // Validate event
-      const hash = crypto
-        .createHmac('sha512', secret)
-        .update(JSON.stringify(req.body))
-        .digest('hex');
+export async function POST(req: Request) {
+  try {
+    // Read the request body as a JSON object
+    const body = await req.json();
 
-      if (hash === req.headers['x-paystack-signature']) {
-        // Retrieve the request's body
-        const event = req.body;
+    // Validate event signature
+    const hash = crypto
+      .createHmac('sha512', secret)
+      .update(JSON.stringify(body))
+      .digest('hex');
 
-        // Process the event here
-        console.log('Paystack event:', event);
+    if (hash === req.headers.get('x-paystack-signature')) {
+      // Process the event here
+      console.log('Paystack event:', body);
 
-        // Respond with 200 if successful
-        return res.status(200).send('Webhook received and processed');
-      } else {
-        // Invalid signature
-        return res.status(400).send('Invalid signature');
-      }
-    } catch (error) {
-      console.error('Error processing webhook:', error);
-      return res.status(500).send('Server error');
+      // Return a success response
+      return NextResponse.json({ message: 'Webhook received and processed' }, { status: 200 });
+    } else {
+      // Invalid signature
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
-  } else {
-    // Only accept POST requests
-    res.setHeader('Allow', ['POST']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
+  } catch (error) {
+    console.error('Error processing webhook:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
+}
+
+export function GET() {
+  // Return a 405 if it's not a POST request
+  return new Response(`Method Not Allowed`, { status: 405, headers: { Allow: 'POST' } });
 }
