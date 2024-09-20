@@ -1,0 +1,68 @@
+.bookingContainer {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    margin-top: 5vh;
+}
+
+.busSeats {
+    display: flex;
+    justify-self: end;
+    height: fit-content;
+}
+
+.col{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.middle{
+    flex-direction: column-reverse;
+}
+
+.cardForm {
+    width:max-content ;
+    border: solid #ededed 2px;
+    padding: 20px;
+    border-radius: 8px;
+    margin-left: 15px;
+}
+
+.whitebgInput{
+    background-color: #ebebeb;
+    display: block;
+}
+
+.select{
+    background-color: #ebebeb;
+}
+
+
+@media (max-width:1024px) {
+    .bookingContainer{
+        grid-template-columns: 100%;
+        gap: 10px;
+        margin-top: 0;
+        justify-self: center;
+    }
+
+    .cardForm {
+        width: 70%;
+        justify-self: center;
+    }
+    
+    .busSeats {
+        justify-content: center;
+    }
+
+    .whitebgInput{
+        max-width: 100%;
+    }
+}
+
+@media (max-width:600px) {
+    .cardForm {
+        width: 100%;
+    }
+}
+

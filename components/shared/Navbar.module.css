@@ -1,0 +1,23 @@
+.navWrapper{
+    max-width: 1350px;
+    padding-top: 2vh;
+    padding-bottom: 2vh;    
+}
+  
+.navLinks {
+display: flex;
+width: 370px;
+justify-content: space-between;
+font-size: 13px;
+}
+
+.navLink a {
+padding: 10px 10px;
+border-radius: 20px;
+}
+
+
+.navLink a:hover {
+background-color: #e8e8e850;
+
+}
