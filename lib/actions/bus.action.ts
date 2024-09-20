@@ -9,7 +9,7 @@ export const getSeats = async ({pickup, date} : {pickup: string, date: string}) 
 try {
     await dbConnect();
 
-    let bus = await Bus.findOne({ pickup: pickup, date: date, isFull: false}, { availableSeats: true, takenSeats: true, _id: true, price: true });
+    const bus = await Bus.findOne({ pickup: pickup, date: date, isFull: false}, { availableSeats: true, takenSeats: true, _id: true, price: true });
     if (bus) {
         const { availableSeats, takenSeats, _id, price } = bus;
         return { availableSeats, takenSeats, _id: _id.toString(), price };

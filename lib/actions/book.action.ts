@@ -5,7 +5,18 @@ import { dbConnect } from "../database"
 import Booking from "../database/models/booking.model"
 import { handleError } from "../utils"
 
-export const booking = async ({booking, path} : {booking: {}, path: React.ReactNode}) => {
+type BookingProps = {
+    pickup: string,
+    destination: string,
+    date: string,
+    fullName: string,
+    email: string,
+    phone:string,
+    seats:string,
+
+  };
+
+export const booking = async ({booking, path} : {booking: BookingProps, path: React.ReactNode}) => {
 try {
     await dbConnect();
     const newbooking = await Booking.create(booking);
