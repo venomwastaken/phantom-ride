@@ -19,7 +19,7 @@ const HomeForm = () => {
   function onSubmit(values: homeFormParams) {
     console.log(values);
 
-    let query = [];
+    const query = [];
   
     // Check if 'pickup' is present and push it to the query array
     if (values.pickup) {

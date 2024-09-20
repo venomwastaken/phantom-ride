@@ -8,7 +8,7 @@ import { z } from "zod";
 import dynamic from "next/dynamic";
 
 // Dynamically import PaystackPop with SSR disabled
-const PaystackPop = dynamic(() => import("@paystack/inline-js"), { ssr: false });
+const PaystackPop = dynamic(() => import("@paystack/inline-js"), { ssr: false }); // eslint-disable-next-line no-unused-vars
 
 
 import {
@@ -31,7 +31,6 @@ export default function ProfileForm() {
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [price, setPrice] = useState<number>(0); // Initialize with null to indicate loading
   const [takenSeats, setTakenSeats] = useState<string[]>([]);
-  const router = useRouter();
 
   const col1 = [
     "01",

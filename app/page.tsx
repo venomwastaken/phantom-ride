@@ -4,7 +4,7 @@ import Navbar from "@/components/shared/Navbar";
 import SubToMail from "@/components/SubToMail";
 import Image from "next/image";
 import Link from "next/link";
-const date = new Date();
+
 
 
 export default function Home() {
