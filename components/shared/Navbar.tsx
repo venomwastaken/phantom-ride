@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import styles from './navbar.module.css'; // Adjust import as needed
+import styles from './Navbar.module.css'; // Adjust import as needed
 import Mobilenav from './Mobilenav';
 
 interface NavbarProps {
