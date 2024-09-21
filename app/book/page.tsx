@@ -7,8 +7,6 @@ import { z } from "zod";
 
 import dynamic from "next/dynamic";
 
-// Dynamically import PaystackPop with SSR disabled
-const PaystackPop = dynamic(() => import("@paystack/inline-js"), { ssr: false }); // eslint-disable-next-line no-unused-vars
 
 
 import {
@@ -95,18 +93,21 @@ export default function ProfileForm() {
 
   useEffect(() => {
     const fetchSeats = async () => {
-      ;
-      const bus = await getSeats({
-        pickup: form.getValues("pickup"),
-        date: form.getValues("date"),
-      });
-      setSelectedSeats([])
-      setTakenSeats(bus?.takenSeats);
-      setPrice(bus?.price);
+      try {
+        const bus = await getSeats({
+          pickup: form.getValues("pickup"),
+          date: form.getValues("date"),
+        });
+        setSelectedSeats([]);
+        setTakenSeats(bus?.takenSeats);
+        setPrice(bus?.price);
+      } catch (error) {
+        console.error("Error fetching seats:", error);
+      }
     };
-
-    fetchSeats(); // Call the inner async function
-  }, [form.watch("date"), form.watch("pickup")]); // Use form.watch to directly track values
+  
+    fetchSeats();
+  }, [form.watch("date"), form.watch("pickup")]);
 
   function selectHandler(id: string) {
     if (!takenSeats.includes(id)) {
@@ -144,7 +145,8 @@ export default function ProfileForm() {
         (price! * selectedSeats.length * 100).toString()
       );
       if (typeof window !== 'undefined' && result && result.data) {
-        const PaystackPop = (await import("@paystack/inline-js")).default;
+        const { default: PaystackPop } = await import("@paystack/inline-js");
+
         const popup = new PaystackPop();
         popup.resumeTransaction(result.data.data.access_code);
       } else {
@@ -172,8 +174,8 @@ export default function ProfileForm() {
 
   return (
     <>
+    <Suspense>
       <Navbar/>
-      <Suspense>
       <div className={`${styles.bookingContainer} wrapper`}>
         <div className={`${styles.busSeats} ${styles.cardForm}`}>
           <div className={styles.col}>
