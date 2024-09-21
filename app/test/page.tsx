@@ -24,13 +24,14 @@ export default function Test() {
   return (
     <>
       <Navbar />
-      <div className={`${styles.bookingContainer} wrapper`}>
-        <BusLayout
-          takenSeats={takenSeats}
-          selectedSeats={selectedSeats}
-          onSeatSelectionChange={handleSeatSelectionChange} // Pass the callback function
-        />
-        <Suspense>
+      <Suspense>
+        <div className={`${styles.bookingContainer} wrapper`}>
+          <BusLayout
+            takenSeats={takenSeats}
+            selectedSeats={selectedSeats}
+            onSeatSelectionChange={handleSeatSelectionChange} // Pass the callback function
+          />
+
           <BookForm
             pickup={pickup}
             date={date}
@@ -38,8 +39,8 @@ export default function Test() {
             onSeatSelectionChange={handleSeatSelectionChange}
             sendTakenSeats={handleTakenSeats}
           />
-        </Suspense>
-      </div>
+        </div>
+      </Suspense>
     </>
   );
 }
