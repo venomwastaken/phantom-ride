@@ -172,7 +172,7 @@ export default function ProfileForm() {
   }
 
   return (
-    <Suspense>
+    <Suspense fallback={<div>Loading...</div>}>
       <Navbar/>
       <div className={`${styles.bookingContainer} wrapper`}>
         <div className={`${styles.busSeats} ${styles.cardForm}`}>
