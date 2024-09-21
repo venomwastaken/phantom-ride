@@ -155,19 +155,6 @@ export default function ProfileForm() {
       console.error("Error:", error);
     }
 
-    // try {
-    //   const newBooking = await booking({
-    //     booking: values,
-    //     path: "/"
-    //   })
-
-    //   if(newBooking) {
-    //     form.reset()
-    //     router.push('/')
-    //   }
-    // }catch(error) {
-    //   console.log(error)
-    // }
     console.log(values);
   }
 

@@ -37,6 +37,32 @@
     background-color: #ebebeb;
 }
 
+.seat {
+    display: flex;
+    align-items: center;
+    width: 45px;
+    height: 45px;
+    cursor: pointer;
+    border: solid #ebebeb 2px;
+    border-radius: 8px;
+    justify-content: center;
+    margin: 2px;
+    background-color: rgba(127, 127, 127, 0.06); /* Default background */
+    border-color: #ebebeb; /* Default border color */
+  }
+  
+  .taken {
+    background-color: rgba(255, 0, 0, 0.06); /* Red background for taken seats */
+    border-color: rgb(255, 127, 127); /* Red border for taken seats */
+    cursor: not-allowed; /* Disable cursor */
+  }
+  
+  .selected {
+    background-color: rgba(0, 255, 0, 0.06); /* Green background for selected seats */
+    border-color: var(--mylime); /* Lime border for selected seats */
+  }
+  
+
 
 @media (max-width:1024px) {
     .bookingContainer{
@@ -65,4 +91,6 @@
         width: 100%;
     }
 }
+
+
 
