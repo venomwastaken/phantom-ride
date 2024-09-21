@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import dynamic from "next/dynamic";
 
 
 
@@ -173,7 +172,6 @@ export default function ProfileForm() {
   }
 
   return (
-    <>
     <Suspense>
       <Navbar/>
       <div className={`${styles.bookingContainer} wrapper`}>
@@ -442,6 +440,5 @@ export default function ProfileForm() {
         </Form>
       </div>
       </Suspense>
-    </>
   );
 }
