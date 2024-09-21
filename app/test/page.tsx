@@ -1,4 +1,6 @@
-"use client";
+'use client'
+
+
 import Navbar from "@/components/shared/Navbar";
 import { Suspense, useEffect, useState } from "react";
 import BusLayout from "@/components/BusLayout";
