@@ -6,7 +6,7 @@ import BookForm from "@/components/BookForm";
 import styles from "@/app/book/bs.module.css";
 import { useSearchParams } from "next/navigation";
 
-export default function test() {
+export default function Test() {
   const searchParams = useSearchParams();
   const pickup = searchParams.get("pickup") || "";
   const date = searchParams.get("date") || "";
