@@ -80,20 +80,28 @@ export default function BookForm({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      // Initialize the transaction with Paystack
       const result = await initializeTransaction(
         values.email,
         (price! * selectedSeats.length * 100).toString()
       );
+  
       if (typeof window !== "undefined" && result && result.data) {
         const { default: PaystackPop } = await import("@paystack/inline-js");
-
-
-        const bookingResponse = await booking({...values, reference:result.data.data.reference})
-
+  
+        // Create the booking on your server before payment
+        const bookingData = {
+          ...values,
+          reference: result.data.data.reference, // Store Paystack reference
+        };
+  
+        // Send booking data to the server to create a pending booking
+        const bookingResponse = await booking(bookingData); // Assuming `booking` is an API function
         if (!bookingResponse || bookingResponse.status !== 200) {
           throw new Error("Booking creation failed");
         }
-
+  
+        // Open Paystack popup for payment
         const popup = new PaystackPop();
         popup.resumeTransaction(result.data.data.access_code);
       } else {
@@ -102,9 +110,10 @@ export default function BookForm({
     } catch (error) {
       console.error("Error:", error);
     }
-
+  
     console.log(values);
   }
+  
 
   return (
     <>
