@@ -20,6 +20,7 @@ export async function POST(req: Request) {
       if(body.event==="paymentrequest.success"){
         
       }
+      console.log("hello")
       console.log('Paystack event:', body);
 
       // Return a success response
