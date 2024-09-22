@@ -17,6 +17,9 @@ export async function POST(req: Request) {
 
     if (hash === req.headers.get('x-paystack-signature')) {
       // Process the event here
+      if(body.event==="paymentrequest.success"){
+        
+      }
       console.log('Paystack event:', body);
 
       // Return a success response

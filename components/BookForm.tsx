@@ -18,6 +18,7 @@ import Dropdown from "@/components/Dropdown";
 import { useEffect, useState } from "react";
 import { initializeTransaction } from "@/lib/actions/payment.action";
 import { getSeats } from "@/lib/actions/bus.action";
+import { booking } from "@/lib/actions/book.action";
 
 type bookFormProps = {
   pickup?: string;
@@ -85,6 +86,13 @@ export default function BookForm({
       );
       if (typeof window !== "undefined" && result && result.data) {
         const { default: PaystackPop } = await import("@paystack/inline-js");
+
+
+        const bookingResponse = await booking({...values, reference:result.data.data.reference})
+
+        if (!bookingResponse || bookingResponse.status !== 200) {
+          throw new Error("Booking creation failed");
+        }
 
         const popup = new PaystackPop();
         popup.resumeTransaction(result.data.data.access_code);

@@ -13,10 +13,11 @@ type BookingProps = {
     email: string,
     phone:string,
     seats:string,
-
+    reference:string,
+    status?:string,
   };
 
-export const booking = async ({booking, path} : {booking: BookingProps, path: React.ReactNode}) => {
+export const booking = async (booking: BookingProps) => {
 try {
     await dbConnect();
     const newbooking = await Booking.create(booking);

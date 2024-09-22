@@ -10,6 +10,8 @@ export interface IBooking extends Document {
     phone: string;
     seats: string;
     bookingDate: Date;
+    reference: string;
+    status?: 'pending' | 'completed'
 };
 
 const BookingSchema: Schema = new Schema({
@@ -20,7 +22,9 @@ const BookingSchema: Schema = new Schema({
   email: {type: String, required: true},
   phone: {type: String, required: true},
   seats: {type: String, required: true},
-  bookingDate: {type: Date, default: Date.now}
+  bookingDate: {type: Date, default: Date.now},
+  reference: {type:String, required: true},  // This should match Paystack's reference
+  status: { type: String, default: 'pending' }
 });
 
 const Booking= models.Booking || model('Booking', BookingSchema);
