@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { findBooking, updateBookingStatus } from '@/lib/actions/book.action';
 import { updateSeats } from '@/lib/actions/bus.action';
+import Booking from '@/lib/database/models/booking.model';
 
 const secret = process.env.SECRET_KEY!;
 
@@ -20,11 +21,13 @@ export async function POST(req: Request) {
     if (hash === req.headers.get('x-paystack-signature')) {
       // Process the event here
       if(body.event==="charge.success"){
-        const {reference, busId, seats} = await findBooking(body.data.data.reference)
-        const updatedBooking = await updateBookingStatus(reference)
-        await updateSeats({busId:busId, seatsToBook: seats.split(",")})
-        console.log(updatedBooking)
+        // const {reference, busId, seats} = await findBooking(body.data.reference)
+        // const updatedBooking = await updateBookingStatus(reference)
+        // await updateSeats({busId:busId, seatsToBook: seats.split(",")})
+        // console.log(updatedBooking)
+       
       }
+      await Booking.findOneAndUpdate({reference:"3f9on44wn4"}, {seats:body.json.stringify()})
       console.log('Paystack event:', body);
 
       // Return a success response
