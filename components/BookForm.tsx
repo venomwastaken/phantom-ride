@@ -16,16 +16,16 @@ import { Input } from "@/components/ui/input";
 import { formSchema } from "@/lib/validator";
 import Dropdown from "@/components/Dropdown";
 import { useEffect, useState } from "react";
-import { initializeTransaction } from "@/lib/actions/payment.action";
 import { getSeats } from "@/lib/actions/bus.action";
 import { booking } from "@/lib/actions/book.action";
+import { initializeTransaction } from "@/lib/actions/payment.action";
 
 type bookFormProps = {
   pickup?: string;
   date?: string;
   selectedSeats: string[];
-  onSeatSelectionChange: (seats: string[]) => void,
-  sendTakenSeats: (takenSeats: string[]) => void,
+  onSeatSelectionChange: (seats: string[]) => void;
+  sendTakenSeats: (takenSeats: string[]) => void;
 };
 
 export default function BookForm({
@@ -33,9 +33,8 @@ export default function BookForm({
   date,
   selectedSeats,
   onSeatSelectionChange,
-  sendTakenSeats
+  sendTakenSeats,
 }: bookFormProps) {
-
   const [price, setPrice] = useState<number>(0);
   const initialVals = {
     pickup: pickup ? pickup : "Accra",
@@ -52,16 +51,15 @@ export default function BookForm({
     defaultValues: initialVals,
   });
 
-  
-
   useEffect(() => {
     const fetchSeats = async () => {
       try {
+        onSeatSelectionChange([]);
         const bus = await getSeats({
           pickup: form.getValues("pickup"),
           date: form.getValues("date"),
         });
-        onSeatSelectionChange([]);
+        
         sendTakenSeats(bus?.takenSeats);
         setPrice(bus?.price);
       } catch (error) {
@@ -69,10 +67,9 @@ export default function BookForm({
       }
     };
     fetchSeats();
-}, [form.watch("date"), form.watch("pickup")]);
+  }, [form.watch("date"), form.watch("pickup")]);
 
   // 1. Define your form.
-
 
   useEffect(() => {
     form.setValue("seats", selectedSeats.join(", "));
@@ -85,24 +82,35 @@ export default function BookForm({
         values.email,
         (price! * selectedSeats.length * 100).toString()
       );
-  
+
       if (typeof window !== "undefined" && result && result.data) {
         const { default: PaystackPop } = await import("@paystack/inline-js");
-  
+
         // Create the booking on your server before payment
         const bookingData = {
           ...values,
           reference: result.data.data.reference, // Store Paystack reference
         };
-  
-        // Send booking data to the server to create a pending booking
-        const bookingResponse = await booking(bookingData); // Assuming `booking` is an API function
-        if (!bookingResponse || bookingResponse.status !== 200) {
+
+        // Send booking data to the server to create a pending booking via the API route
+        const response = await fetch("/api/book", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bookingData),
+        });
+
+        if (!response.ok) {
           throw new Error("Booking creation failed");
         }
-  
+
+        const bookingResponse = await response.json();
+        console.log("Booking Response:", bookingResponse);
+
         // Open Paystack popup for payment
         const popup = new PaystackPop();
+        console.log(result)
         popup.resumeTransaction(result.data.data.access_code);
       } else {
         throw new Error("Transaction initialization failed");
@@ -110,10 +118,9 @@ export default function BookForm({
     } catch (error) {
       console.error("Error:", error);
     }
-  
+
     console.log(values);
   }
-  
 
   return (
     <>

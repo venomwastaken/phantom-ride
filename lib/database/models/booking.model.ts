@@ -2,6 +2,7 @@ import{ Schema, models, model } from 'mongoose';
 
 export interface IBooking extends Document {
     _id: string,
+    busId : string;
     pickup: string;
     destination: string;
     date: string;
@@ -15,6 +16,7 @@ export interface IBooking extends Document {
 };
 
 const BookingSchema: Schema = new Schema({
+  busId : {type:String, required:true},
   pickup: {type: String, required: true},
   destination: {type: String, required: true},
   date: {type: String, required: true},

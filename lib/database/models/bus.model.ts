@@ -3,7 +3,8 @@ import{ Schema, models, model } from 'mongoose';
 
 export interface IBus extends Document {
   _id: string,
-  terminal: string;
+  busId: string;
+  pickup: string;
   date: string;
   isFull: boolean;
   availableSeats: string[];
@@ -12,7 +13,10 @@ export interface IBus extends Document {
 };
 
 
+
+
 const BusSchema: Schema = new Schema({
+  busId : {type: String, required: true},
   pickup: { type: String, required: true },
   date: {type: String, required: true},
   isFull: {type: Boolean, default: false},
@@ -28,6 +32,6 @@ const BusSchema: Schema = new Schema({
   price: {type: Number, require: true}
 });
 
-const Bus= models.Bus || model('Bus', BusSchema);
+const Bus= models.Bus || model<IBus>('Bus', BusSchema);
 
 export default Bus;

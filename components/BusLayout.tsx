@@ -58,6 +58,7 @@ export default function BusLayout({takenSeats, selectedSeats, onSeatSelectionCha
     onSeatSelectionChange(selectedSeatsState);
   }, [selectedSeatsState, onSeatSelectionChange]);
 
+
   function selectHandler(id: string) {
     if (!takenSeats.includes(id)) {
       setSelectedSeatsState(

@@ -28,6 +28,7 @@ export default function ProfileForm() {
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [price, setPrice] = useState<number>(0); // Initialize with null to indicate loading
   const [takenSeats, setTakenSeats] = useState<string[]>([]);
+  const [busId, setBusId ] = useState<string>()
 
   const col1 = [
     "01",
@@ -100,6 +101,7 @@ export default function ProfileForm() {
         setSelectedSeats([]);
         setTakenSeats(bus?.takenSeats);
         setPrice(bus?.price);
+        setBusId(bus?.busId)
       } catch (error) {
         console.error("Error fetching seats:", error);
       }
@@ -139,13 +141,39 @@ export default function ProfileForm() {
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      // Initialize the transaction with Paystack
       const result = await initializeTransaction(
         values.email,
         (price! * selectedSeats.length * 100).toString()
       );
-      if (typeof window !== 'undefined' && result && result.data) {
+
+      if (typeof window !== "undefined" && result && result.data) {
         const { default: PaystackPop } = await import("@paystack/inline-js");
 
+        // Create the booking on your server before payment
+        const bookingData = {
+          ...values,
+          reference: result.data.data.reference,
+          busId: busId
+        };
+
+        // Send booking data to the server to create a pending booking via the API route
+        const response = await fetch("/api/book", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bookingData),
+        });
+
+        if (!response.ok) {
+          throw new Error("Booking creation failed");
+        }
+
+        const bookingResponse = await response.json();
+        console.log("Booking Response:", bookingResponse);
+
+        // Open Paystack popup for payment
         const popup = new PaystackPop();
         popup.resumeTransaction(result.data.data.access_code);
       } else {

@@ -1,6 +1,8 @@
 // app/api/webhooks/paystack/route.ts
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { findBooking, updateBookingStatus } from '@/lib/actions/book.action';
+import { updateSeats } from '@/lib/actions/bus.action';
 
 const secret = process.env.SECRET_KEY!;
 
@@ -17,10 +19,12 @@ export async function POST(req: Request) {
 
     if (hash === req.headers.get('x-paystack-signature')) {
       // Process the event here
-      if(body.event==="paymentrequest.success"){
-        
+      if(body.event==="charge.success"){
+        const {reference, busId, seats} = await findBooking(body.data.reference)
+        const updatedBooking = await updateBookingStatus(reference)
+        await updateSeats({busId:busId, seatsToBook: seats.split(",")})
+        console.log(updatedBooking)
       }
-      console.log("hello")
       console.log('Paystack event:', body);
 
       // Return a success response
