@@ -17,7 +17,6 @@ import { formSchema } from "@/lib/validator";
 import Dropdown from "@/components/Dropdown";
 import { useEffect, useState } from "react";
 import { getSeats } from "@/lib/actions/bus.action";
-import { makeBooking } from "@/lib/actions/book.action";
 import { initializeTransaction } from "@/lib/actions/payment.action";
 
 type bookFormProps = {
