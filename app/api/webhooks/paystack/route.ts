@@ -5,7 +5,7 @@ import { findBooking, updateBookingStatus } from '@/lib/actions/book.action';
 import { updateSeats } from '@/lib/actions/bus.action';
 import Booking from '@/lib/database/models/booking.model';
 
-const secret = process.env.PASTACK_SECRET_KEY!;
+const secret = process.env.PAYSTACK_SECRET_KEY!;
 
 export async function POST(req: Request) {
   try {
