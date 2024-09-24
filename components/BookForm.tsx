@@ -79,7 +79,8 @@ export default function BookForm({
       // Initialize the transaction with Paystack
       const result = await initializeTransaction(
         values.email,
-        (price! * selectedSeats.length * 100).toString()
+        price,
+        selectedSeats,
       );
 
       if (typeof window !== "undefined" && result && result.data) {

@@ -13,7 +13,7 @@ type DropdowmProps = {
   value?: string;
   onChangeHandler?: () => void;
   items: string[];
-  disabled: boolean;
+  disabled?: boolean;
 };
 
 const Dropdown = ({ value, onChangeHandler, items, placeholder, disabled}: DropdowmProps) => {
