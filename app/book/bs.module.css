@@ -37,7 +37,9 @@
     background-color: #ebebeb;
 }
 
-.seat {
+/* bs.module.css */
+
+.seats {
     display: flex;
     align-items: center;
     width: 45px;
@@ -49,18 +51,20 @@
     margin: 2px;
     background-color: rgba(127, 127, 127, 0.06); /* Default background */
     border-color: #ebebeb; /* Default border color */
+    transition: background-color 0.3s, border-color 0.3s;
   }
   
-  .taken {
+  .seats.taken {
     background-color: rgba(255, 0, 0, 0.06); /* Red background for taken seats */
     border-color: rgb(255, 127, 127); /* Red border for taken seats */
     cursor: not-allowed; /* Disable cursor */
   }
   
-  .selected {
+  .seats.selected {
     background-color: rgba(0, 255, 0, 0.06); /* Green background for selected seats */
     border-color: var(--mylime); /* Lime border for selected seats */
   }
+  
   
 
 

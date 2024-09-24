@@ -1,12 +1,10 @@
-"use client";
+'use client';
+
 import styles from "./bs.module.css";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-
-
 
 import {
   Form,
@@ -23,12 +21,18 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getSeats } from "@/lib/actions/bus.action";
 import { initializeTransaction } from "@/lib/actions/payment.action";
 import Navbar from "@/components/shared/Navbar";
+import LoadingSpinner from "@/components/LoadingSpinner"; // Import the spinner component
 
 export default function ProfileForm() {
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
-  const [price, setPrice] = useState<number>(0); // Initialize with null to indicate loading
+  const [price, setPrice] = useState<number>(0);
   const [takenSeats, setTakenSeats] = useState<string[]>([]);
-  const [busId, setBusId ] = useState<string>()
+  const [busId, setBusId] = useState<string | undefined>();
+  const router = useRouter();
+
+  // Loading state variables
+  const [isLoadingSeats, setIsLoadingSeats] = useState<boolean>(true);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const col1 = [
     "01",
@@ -69,7 +73,7 @@ export default function ProfileForm() {
     "27",
     "30",
     "34",
-  ]; // Example seat numbers
+  ];
 
   const searchParams = useSearchParams();
   const pickup = searchParams.get("pickup");
@@ -93,58 +97,49 @@ export default function ProfileForm() {
 
   useEffect(() => {
     const fetchSeats = async () => {
+      setIsLoadingSeats(true); // Start loading
       try {
         const bus = await getSeats({
           pickup: form.getValues("pickup"),
           date: form.getValues("date"),
         });
         setSelectedSeats([]);
-        setTakenSeats(bus?.takenSeats);
-        setPrice(bus?.price);
-        setBusId(bus?.busId)
+        setTakenSeats(bus?.takenSeats || []);
+        setPrice(bus?.price || 0);
+        setBusId(bus?.busId);
       } catch (error) {
         console.error("Error fetching seats:", error);
+      } finally {
+        setIsLoadingSeats(false); // End loading
       }
     };
-  
+
     fetchSeats();
   }, [form.watch("date"), form.watch("pickup")]);
 
   function selectHandler(id: string) {
     if (!takenSeats.includes(id)) {
-      setSelectedSeats(
-        (prevSelectedSeats) =>
-          prevSelectedSeats.includes(id)
-            ? prevSelectedSeats.filter((seat) => seat !== id) // Deselect if already selected
-            : [...prevSelectedSeats, id] // Select new seat
+      setSelectedSeats((prevSelectedSeats) =>
+        prevSelectedSeats.includes(id)
+          ? prevSelectedSeats.filter((seat) => seat !== id)
+          : [...prevSelectedSeats, id]
       );
     }
   }
 
-  // useEffect(() => {
-  //   const pickup = searchParams.get('pickup');
-  //   const date = searchParams.get('date');
-
-  //   if (date) {
-  //     form.setValue('date', date);
-  //   }
-  //   if (pickup) {
-  //     form.setValue('pickup', pickup);
-  //   }
-  // }, []);
-
   useEffect(() => {
     form.setValue("seats", selectedSeats.join(", "));
-  }, [selectedSeats]); // This will update the "seats" field whenever selectedSeats changes
-  
+  }, [selectedSeats, form]);
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true); // Start submitting
     try {
       // Initialize the transaction with Paystack
       const result = await initializeTransaction(
         values.email,
-        (price! * selectedSeats.length * 100).toString()
+        price!, 
+        selectedSeats
       );
 
       if (typeof window !== "undefined" && result && result.data) {
@@ -154,7 +149,7 @@ export default function ProfileForm() {
         const bookingData = {
           ...values,
           reference: result.data.data.reference,
-          busId: busId
+          busId: busId,
         };
 
         // Send booking data to the server to create a pending booking via the API route
@@ -176,150 +171,103 @@ export default function ProfileForm() {
         // Open Paystack popup for payment
         const popup = new PaystackPop();
         popup.resumeTransaction(result.data.data.access_code);
+        
       } else {
         throw new Error("Transaction initialization failed");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error:", error);
+    } finally {
+      setIsSubmitting(false); // End submitting
     }
-
+    form.reset();
     console.log(values);
   }
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <Navbar/>
+      <Navbar />
       <div className={`${styles.bookingContainer} wrapper`}>
-        <div className={`${styles.busSeats} ${styles.cardForm}`}>
-          <div className={styles.col}>
-            {col1.map((seat) => (
-              <div
-                className={styles.seats}
-                key={seat}
-                onClick={() => selectHandler(seat)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: "45px",
-                  height: "45px",
-                  backgroundColor: takenSeats.includes(seat)
-                    ? "rgba(255, 0, 0, 0.06)"
-                    : selectedSeats.includes(seat)
-                    ? "rgba(0, 255, 0, 0.06)"
-                    : "rgba(127, 127, 127, 0.06)",
-                  cursor: takenSeats.includes(seat) ? "not-allowed" : "pointer",
-                  border: "solid #ebebeb 2px",
-                  borderRadius: "8px",
-                  justifyContent: "center",
-                  margin: "2px",
-                  borderColor: takenSeats.includes(seat)
-                    ? "rgb(255, 127, 127)"
-                    : selectedSeats.includes(seat)
-                    ? "var(--mylime)"
-                    : "#ebebeb",
-                }}
-              >
-                {seat}
-              </div>
-            ))}
+        {isLoadingSeats ? (
+          <div className="flex justify-center items-center h-64">
+            <LoadingSpinner />
           </div>
-          <div className={styles.col}>
-            {col2.map((seat) => (
-              <div
-                className={styles.seats}
-                key={seat}
-                onClick={() => selectHandler(seat)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: "45px",
-                  height: "45px",
-                  backgroundColor: takenSeats.includes(seat)
-                    ? "rgba(255, 0, 0, 0.06)"
-                    : selectedSeats.includes(seat)
-                    ? "rgba(0, 255, 0, 0.06)"
-                    : "rgba(127, 127, 127, 0.06)",
-                  cursor: takenSeats.includes(seat) ? "not-allowed" : "pointer",
-                  border: "solid #ebebeb 2px",
-                  borderRadius: "8px",
-                  justifyContent: "center",
-                  margin: "2px",
-                  borderColor: takenSeats.includes(seat)
-                    ? "rgb(255, 127, 127)"
-                    : selectedSeats.includes(seat)
-                    ? "var(--mylime)"
-                    : "#ebebeb",
-                }}
-              >
-                {seat}
-              </div>
-            ))}
+        ) : (
+          <div className={`${styles.busSeats} ${styles.cardForm}`}>
+            {/* Column 1 */}
+            <div className={styles.col}>
+              {col1.map((seat) => (
+                <div
+                  key={seat}
+                  onClick={() => selectHandler(seat)}
+                  className={`${styles.seats} ${
+                    takenSeats.includes(seat)
+                      ? styles.taken
+                      : selectedSeats.includes(seat)
+                      ? styles.selected
+                      : ""
+                  }`}
+                >
+                  {seat}
+                </div>
+              ))}
+            </div>
+            {/* Column 2 */}
+            <div className={styles.col}>
+              {col2.map((seat) => (
+                <div
+                  key={seat}
+                  onClick={() => selectHandler(seat)}
+                  className={`${styles.seats} ${
+                    takenSeats.includes(seat)
+                      ? styles.taken
+                      : selectedSeats.includes(seat)
+                      ? styles.selected
+                      : ""
+                  }`}
+                >
+                  {seat}
+                </div>
+              ))}
+            </div>
+            {/* Column 3 */}
+            <div className={`${styles.col} ${styles.middle}`}>
+              {col3.map((seat) => (
+                <div
+                  key={seat}
+                  onClick={() => selectHandler(seat)}
+                  className={`${styles.seats} ${
+                    takenSeats.includes(seat)
+                      ? styles.taken
+                      : selectedSeats.includes(seat)
+                      ? styles.selected
+                      : ""
+                  }`}
+                >
+                  {seat}
+                </div>
+              ))}
+            </div>
+            {/* Column 4 */}
+            <div className={styles.col}>
+              {col4.map((seat) => (
+                <div
+                  key={seat}
+                  onClick={() => selectHandler(seat)}
+                  className={`${styles.seats} ${
+                    takenSeats.includes(seat)
+                      ? styles.taken
+                      : selectedSeats.includes(seat)
+                      ? styles.selected
+                      : ""
+                  }`}
+                >
+                  {seat}
+                </div>
+              ))}
+            </div>
           </div>
-          <div className={`${styles.col} ${styles.middle}`}>
-            {col3.map((seat) => (
-              <div
-                className={styles.seats}
-                key={seat}
-                onClick={() => selectHandler(seat)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: "45px",
-                  height: "45px",
-                  backgroundColor: takenSeats.includes(seat)
-                    ? "rgba(255, 0, 0, 0.06)"
-                    : selectedSeats.includes(seat)
-                    ? "rgba(0, 255, 0, 0.06)"
-                    : "rgba(127, 127, 127, 0.06)",
-                  cursor: takenSeats.includes(seat) ? "not-allowed" : "pointer",
-                  border: "solid #ebebeb 2px",
-                  borderRadius: "8px",
-                  justifyContent: "center",
-                  margin: "2px",
-                  borderColor: takenSeats.includes(seat)
-                    ? "rgb(255, 127, 127)"
-                    : selectedSeats.includes(seat)
-                    ? "var(--mylime)"
-                    : "#ebebeb",
-                }}
-              >
-                {seat}
-              </div>
-            ))}
-          </div>
-          <div className={styles.col}>
-            {col4.map((seat) => (
-              <div
-                className={styles.seats}
-                key={seat}
-                onClick={() => selectHandler(seat)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: "45px",
-                  height: "45px",
-                  backgroundColor: takenSeats.includes(seat)
-                    ? "rgba(255, 0, 0, 0.06)"
-                    : selectedSeats.includes(seat)
-                    ? "rgba(0, 255, 0, 0.06)"
-                    : "rgba(127, 127, 127, 0.06)",
-                  cursor: takenSeats.includes(seat) ? "not-allowed" : "pointer",
-                  border: "solid #ebebeb 2px",
-                  borderRadius: "8px",
-                  justifyContent: "center",
-                  margin: "2px",
-                  borderColor: takenSeats.includes(seat)
-                    ? "rgb(255, 127, 127)"
-                    : selectedSeats.includes(seat)
-                    ? "var(--mylime)"
-                    : "#ebebeb",
-                }}
-              >
-                {seat}
-              </div>
-            ))}
-          </div>
-        </div>
+        )}
 
         <Form {...form}>
           <div className={styles.cardForm}>
@@ -339,6 +287,7 @@ export default function ProfileForm() {
                         value={field.value}
                         items={["Accra", "Tema", "Adenta"]}
                         placeholder="Pickup Location"
+                        disabled={isSubmitting} // Disable during submission
                       />
                     </FormControl>
                     <FormMessage />
@@ -374,6 +323,7 @@ export default function ProfileForm() {
                         value={field.value}
                         items={["Saturday", "Sunday"]}
                         placeholder="Date"
+                        disabled={isSubmitting} // Disable during submission
                       />
                     </FormControl>
                     <FormMessage />
@@ -390,6 +340,7 @@ export default function ProfileForm() {
                         className={`${styles.whitebgInput} input`}
                         placeholder="Fullname"
                         {...field}
+                        disabled={isSubmitting} // Disable during submission
                       />
                     </FormControl>
                     <FormMessage />
@@ -406,6 +357,7 @@ export default function ProfileForm() {
                         className={`${styles.whitebgInput} input`}
                         placeholder="Email"
                         {...field}
+                        disabled={isSubmitting} // Disable during submission
                       />
                     </FormControl>
                     <FormMessage />
@@ -422,6 +374,7 @@ export default function ProfileForm() {
                         className={`${styles.whitebgInput} input`}
                         placeholder="Phone Number (eg. 054XXXXXXX)"
                         {...field}
+                        disabled={isSubmitting} // Disable during submission
                       />
                     </FormControl>
                     <FormMessage />
@@ -446,14 +399,21 @@ export default function ProfileForm() {
                 )}
               />
               <p className="mt-2 text-xs text-gray-500 bold">
-                Price: GHS {price !== null ? price * selectedSeats.length : 0}
-                .00
+                Price: GHS {price !== null ? price * selectedSeats.length : 0}.00
               </p>
-              <button type="submit">Book Ride</button>
+              <button
+                type="submit"
+                className={
+                  isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                }
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Processing..." : "Book Ride"}
+              </button>
             </form>
           </div>
         </Form>
       </div>
-      </Suspense>
+    </Suspense>
   );
 }

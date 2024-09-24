@@ -1,11 +1,10 @@
 'use server'
 
-import { headers } from 'next/headers'; // Access request headers
 
-export async function initializeTransaction(email: string, amount: string) {
+export async function initializeTransaction(email: string, price: number, selectedSeats: string[]) {
   const paystackUrl = 'https://api.paystack.co/transaction/initialize';
   const secretKey = process.env.PAYSTACK_SECRET_KEY;
-
+  const amount = (price * selectedSeats.length * 100).toString()
   // Ensure the secret key is available
   if (!secretKey) {
     throw new Error('Missing Paystack secret key.');

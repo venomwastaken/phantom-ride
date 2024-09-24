@@ -13,12 +13,13 @@ type DropdowmProps = {
   value?: string;
   onChangeHandler?: () => void;
   items: string[];
+  disabled: boolean;
 };
 
-const Dropdown = ({ value, onChangeHandler, items, placeholder,}: DropdowmProps) => {
+const Dropdown = ({ value, onChangeHandler, items, placeholder, disabled}: DropdowmProps) => {
   return (
     <Select onValueChange={onChangeHandler} defaultValue={value}>
-      <SelectTrigger className={`${styles.select} input dropdown`}>
+      <SelectTrigger className={`${styles.select} input dropdown` } disabled={disabled}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
