@@ -13,7 +13,7 @@ type Recipient = {
 async function sendSms(recipients : RecipientData) {
   try {
     const data = {
-      sender: 'Phantom Ride',
+      sender: 'PHANTOMRIDE',
       message: `We are delighted to confirm your booking with Phantom Ride! 
                 Please note that you must present your ticket code "<%ticket%>" on the day of departure. 
                 We are confident that you will have a smooth ride, and we look forward to having you on board. 
@@ -53,10 +53,10 @@ type EmailPayload = {
 async function sendEmail({ to, name, ticket}: EmailPayload) {
   try {
     const transporter = nodemailer.createTransport({
-      service: 'gmail', // You can use other services like 'SendGrid', 'Outlook', 'Mailgun', etc.
+      service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER, // your email
-        pass: process.env.EMAIL_PASS, // your email password or app-specific password
+        user: process.env.EMAIL_USER, 
+        pass: process.env.EMAIL_PASS, 
       },
     });
 
