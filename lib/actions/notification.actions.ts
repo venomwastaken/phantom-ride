@@ -142,7 +142,7 @@ type customerDetails = {
 
 export async function sendNotification({name, email, phone, ticket}: customerDetails) {
     try {
-        const smsStat = await sendSms({phone:{ticket: ticket}});
+        const smsStat = await sendSms({[phone]:{ticket: ticket}});
         const emailStat = await sendEmail({to: email, name:name, ticket:ticket})
         console.log(smsStat, emailStat);
     } catch (error) {
