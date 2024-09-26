@@ -43,14 +43,16 @@ export const updateSeats = async ({ busId, seatsToBook }: { busId:string, seatsT
     await dbConnect();
     Bus.findOneAndUpdate({busId:busId}, {
     $push: { 
-        takenSeats: { $each: seatsToBook },     // Adds ['07', '08'] to takenSeats array
+        takenSeats: { $each: seatsToBook },     // Adds
     },
 
     $pull: { 
-        availableSeats: { $in: seatsToBook },   // Removes ['07', '08'] from availableSeats
-    }
+        availableSeats: { $in: seatsToBook },   // Removes
+    },
+    
     }, { new: true })
     .then(updatedBus => {
+        (updatedBus.availableSeats.length === 0) && Bus.findOneAndUpdate({busId:updatedBus.busId}, {isFull: true})
         console.log('Seats updated:', updatedBus);
     })
     .catch(error => {
