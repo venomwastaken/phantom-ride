@@ -27,11 +27,11 @@ const Footer = () => {
         <div className={styles.footerColumn}>
           <h3 className="black">Navigations</h3>
           <ul>
-            <li><Link href="#">Home</Link></li>
-            <li><Link href="#">Pickups</Link></li>
-            <li><Link href="#">About Us</Link></li>
-            <li><Link href="#">FAQS</Link></li>
-            <li><Link href="#">Contact Us</Link></li>
+            <li><Link href="/">Home</Link></li>
+            <li><Link href="/pickups">Pickups</Link></li>
+            <li><Link href="/about">About Us</Link></li>
+            <li><Link href="/faqs">FAQS</Link></li>
+            <li><Link href="/contact">Contact Us</Link></li>
           </ul>
         </div>
         <div className={styles.footerColumn}>
