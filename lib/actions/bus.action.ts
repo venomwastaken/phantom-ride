@@ -1,6 +1,5 @@
 'use server'
 
-import { ObjectId } from "mongodb";
 import { dbConnect } from "../database"
 import Bus from "../database/models/bus.model";
 import { handleError } from "../utils"
@@ -38,26 +37,32 @@ try {
 
 
 
-export const updateSeats = async ({ busId, seatsToBook }: { busId:string, seatsToBook: string[] }) => {
+export const updateSeats = async ({ busId, seatsToBook }: { busId: string, seatsToBook: string[] }) => {
+    try {
+        await dbConnect();
 
-    await dbConnect();
-    Bus.findOneAndUpdate({busId:busId}, {
-    $push: { 
-        takenSeats: { $each: seatsToBook },     // Adds
-    },
+        // Find and update the bus by busId
+        const updatedBus = await Bus.findOneAndUpdate(
+            { busId }, // or use _id if busId is not a unique field
+            {
+                $push: { takenSeats: { $each: seatsToBook } }, // Adds to takenSeats
+                $pull: { availableSeats: { $in: seatsToBook } } // Removes from availableSeats
+            },
+            { new: true } // Return the updated document
+        );
 
-    $pull: { 
-        availableSeats: { $in: seatsToBook },   // Removes
-    },
-    
-    }, { new: true })
-    .then(updatedBus => {
-        (updatedBus.availableSeats.length === 0) && Bus.findOneAndUpdate({busId:updatedBus.busId}, {isFull: true})
+        if (!updatedBus) {
+            throw new Error('Bus not found');
+        }
+
+        // Check if all seats are taken and mark bus as full
+        if (updatedBus.availableSeats.length === 0) {
+            await Bus.findOneAndUpdate({ busId: updatedBus.busId }, { isFull: true });
+        }
+
         console.log('Seats updated:', updatedBus);
-    })
-    .catch(error => {
-        console.error('Error updating bus:', error);
-    });
 
-        
+    } catch (error) {
+        console.error('Error updating bus:', error);
     }
+};
