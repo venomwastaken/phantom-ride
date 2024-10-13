@@ -49,23 +49,23 @@ export default function BusLoading() {
     <>
       <div className={`${styles.busSeats} ${styles.cardForm}`}>
         <div className={styles.col}>
-          {col1.map(() => (
-           <Skeleton className="h-[47px] w-[47px] m-[2px] rounded-[8px]" />
+          {col1.map((seat) => (
+           <Skeleton key = {seat} className="h-[47px] w-[47px] m-[2px] rounded-[8px]" />
           ))}
         </div>
         <div className={styles.col}>
-          {col2.map(() => (
-            <Skeleton className="h-[47px] w-[47px] m-[2px] rounded-[8px]" />
+          {col2.map((seat) => (
+            <Skeleton key = {seat} className="h-[47px] w-[47px] m-[2px] rounded-[8px]" />
           ))}
         </div>
         <div className={`${styles.col} ${styles.middle}`}>
-          {col3.map(() => (
-            <Skeleton className="h-[47px] w-[47px] m-[2px] rounded-[8px]" />
+          {col3.map((seat) => (
+            <Skeleton key = {seat} className="h-[47px] w-[47px] m-[2px] rounded-[8px]" />
           ))}
         </div>
         <div className={styles.col}>
-          {col4.map(() => (
-            <Skeleton className="h-[47px] w-[47px] m-[2px] rounded-[8px]" />
+          {col4.map((seat) => (
+            <Skeleton key = {seat} className="h-[47px] w-[47px] m-[2px] rounded-[8px]" />
           ))}
         </div>
       </div>
