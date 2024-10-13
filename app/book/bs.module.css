@@ -42,8 +42,8 @@
 .seats {
     display: flex;
     align-items: center;
-    width: 45px;
-    height: 45px;
+    width: 47px;
+    height: 47px;
     cursor: pointer;
     border: solid #ebebeb 2px;
     border-radius: 8px;
@@ -73,7 +73,6 @@
         grid-template-columns: 100%;
         gap: 10px;
         margin-top: 0;
-        justify-self: center;
     }
 
     .cardForm {
@@ -93,6 +92,7 @@
 @media (max-width:600px) {
     .cardForm {
         width: 100%;
+        margin-left: 0;
     }
 }
 

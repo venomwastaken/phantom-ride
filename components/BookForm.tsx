@@ -18,21 +18,16 @@ import Dropdown from "@/components/Dropdown";
 import { useEffect, useState } from "react";
 import { getSeats } from "@/lib/actions/bus.action";
 import { initializeTransaction } from "@/lib/actions/payment.action";
+import { useBusContext } from "./BusContext";
 
 type bookFormProps = {
   pickup?: string;
   date?: string;
-  selectedSeats: string[];
-  onSeatSelectionChange: (seats: string[]) => void;
-  sendTakenSeats: (takenSeats: string[]) => void;
 };
 
 export default function BookForm({
   pickup,
   date,
-  selectedSeats,
-  onSeatSelectionChange,
-  sendTakenSeats,
 }: bookFormProps) {
   const [price, setPrice] = useState<number>(0);
   const initialVals = {
@@ -50,21 +45,27 @@ export default function BookForm({
     defaultValues: initialVals,
   });
 
+  const {setTakenSeats, selectedSeats, setSelectedSeats, isSubmitting, setIsSubmitting, setIsLoadingSeats, setBusId, busId} = useBusContext();
+
   useEffect(() => {
     const fetchSeats = async () => {
+      setIsLoadingSeats(true); // Start loading
       try {
-        onSeatSelectionChange([]);
         const bus = await getSeats({
           pickup: form.getValues("pickup"),
           date: form.getValues("date"),
         });
-        
-        sendTakenSeats(bus?.takenSeats);
-        setPrice(bus?.price);
+        setSelectedSeats([]);
+        setTakenSeats(bus?.takenSeats || []);
+        setPrice(bus?.price || 0);
+        setBusId(bus?.busId);
       } catch (error) {
         console.error("Error fetching seats:", error);
+      } finally {
+        setIsLoadingSeats(false); // End loading
       }
     };
+
     fetchSeats();
   }, [form.watch("date"), form.watch("pickup")]);
 
@@ -75,12 +76,13 @@ export default function BookForm({
   }, [selectedSeats]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true); // Start submitting
     try {
       // Initialize the transaction with Paystack
       const result = await initializeTransaction(
         values.email,
-        price,
-        selectedSeats,
+        price!, 
+        selectedSeats
       );
 
       if (typeof window !== "undefined" && result && result.data) {
@@ -89,7 +91,8 @@ export default function BookForm({
         // Create the booking on your server before payment
         const bookingData = {
           ...values,
-          reference: result.data.data.reference, // Store Paystack reference
+          reference: result.data.data.reference,
+          busId: busId,
         };
 
         // Send booking data to the server to create a pending booking via the API route
@@ -110,152 +113,166 @@ export default function BookForm({
 
         // Open Paystack popup for payment
         const popup = new PaystackPop();
-        console.log(result)
         popup.resumeTransaction(result.data.data.access_code);
+        
       } else {
         throw new Error("Transaction initialization failed");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error:", error);
+    } finally {
+      setIsSubmitting(false); // End submitting
     }
-
+    form.reset();
     console.log(values);
   }
 
   return (
     <>
       <Form {...form}>
-        <div className={styles.cardForm}>
-          <h2 className="mb-5 bold text-xl">Book a ride</h2>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className=".form-container"
-          >
-            <FormField
-              control={form.control}
-              name="pickup"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Dropdown
-                      onChangeHandler={field.onChange}
-                      value={field.value}
-                      items={["Accra", "Tema", "Adenta"]}
-                      placeholder="Pickup Location"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="destination"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className={`${styles.whitebgInput} input`}
-                      placeholder="Destination"
-                      {...field}
-                      value={field.value}
-                      readOnly
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Dropdown
-                      onChangeHandler={field.onChange}
-                      value={field.value}
-                      items={["Saturday", "Sunday"]}
-                      placeholder="Date"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="fullName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className={`${styles.whitebgInput} input`}
-                      placeholder="Fullname"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className={`${styles.whitebgInput} input`}
-                      placeholder="Email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className={`${styles.whitebgInput} input`}
-                      placeholder="Phone Number (eg. 054XXXXXXX)"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="seats"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className={`${styles.whitebgInput} input`}
-                      placeholder="(selected seats)"
-                      {...field}
-                      readOnly
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <p className="mt-2 text-xs text-gray-500 bold">
-              Price: GHS {price !== null ? price * selectedSeats.length : 0}
-              .00
-            </p>
-            <button type="submit">Book Ride</button>
-          </form>
-        </div>
-      </Form>
+          <div className={styles.cardForm}>
+            <h2 className="mb-5 bold text-xl">Book a ride</h2>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className=".form-container"
+            >
+              <FormField
+                control={form.control}
+                name="pickup"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Dropdown
+                        onChangeHandler={field.onChange}
+                        value={field.value}
+                        items={["Accra", "Tema", "Adenta"]}
+                        placeholder="Pickup Location"
+                        disabled={isSubmitting} // Disable during submission
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="destination"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className={`${styles.whitebgInput} input`}
+                        placeholder="Destination"
+                        {...field}
+                        value={field.value}
+                        readOnly
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Dropdown
+                        onChangeHandler={field.onChange}
+                        value={field.value}
+                        items={["Saturday", "Sunday"]}
+                        placeholder="Date"
+                        disabled={isSubmitting} // Disable during submission
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="fullName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className={`${styles.whitebgInput} input`}
+                        placeholder="Fullname"
+                        {...field}
+                        disabled={isSubmitting} // Disable during submission
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className={`${styles.whitebgInput} input`}
+                        placeholder="Email"
+                        {...field}
+                        disabled={isSubmitting} // Disable during submission
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className={`${styles.whitebgInput} input`}
+                        placeholder="Phone Number (eg. 054XXXXXXX)"
+                        {...field}
+                        disabled={isSubmitting} // Disable during submission
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="seats"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className={`${styles.whitebgInput} input`}
+                        placeholder="(selected seats)"
+                        {...field}
+                        readOnly
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <p className="mt-2 text-xs text-gray-500 bold">
+                Price: GHS {price !== null ? price * selectedSeats.length : 0}.00
+              </p>
+              <button
+                type="submit"
+                className={
+                  isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                }
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Submitting..." : "Book Ride"}
+              </button>
+            </form>
+          </div>
+        </Form>
     </>
   );
 }

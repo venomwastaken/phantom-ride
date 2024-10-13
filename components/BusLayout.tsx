@@ -1,15 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
 import styles from "../app/book/bs.module.css";
+import { useBusContext } from "./BusContext";
+import BusLoading from "./BusLoading";
 
 
-type busLayoutProps = {
-    takenSeats: string[],
-    selectedSeats: string[],
-    onSeatSelectionChange: (seats: string[]) => void,
-}
-
-export default function BusLayout({takenSeats, selectedSeats, onSeatSelectionChange} : busLayoutProps) {
+export default function BusLayout() {
   const col1 = [
     "01",
     "04",
@@ -51,18 +46,14 @@ export default function BusLayout({takenSeats, selectedSeats, onSeatSelectionCha
     "34",
   ];
 
-  const [selectedSeatsState, setSelectedSeatsState] = useState<string[]>(selectedSeats);
+  const {takenSeats, selectedSeats, setSelectedSeats, isLoadingSeats} = useBusContext()
 
-  useEffect(() => {
-    // Notify parent component when selectedSeatsState changes
-    onSeatSelectionChange(selectedSeatsState);
-  }, [selectedSeatsState, onSeatSelectionChange]);
 
 
   function selectHandler(id: string) {
     if (!takenSeats.includes(id)) {
-      setSelectedSeatsState(
-        (prevSelectedSeats) =>
+      setSelectedSeats(
+        (prevSelectedSeats : string[]) =>
           prevSelectedSeats.includes(id)
             ? prevSelectedSeats.filter((seat) => seat !== id) // Deselect if already selected
             : [...prevSelectedSeats, id] // Select new seat
@@ -72,7 +63,8 @@ export default function BusLayout({takenSeats, selectedSeats, onSeatSelectionCha
 
 
   return (
-    <>
+    <> 
+      {isLoadingSeats? <BusLoading/>:
       <div className={`${styles.busSeats} ${styles.cardForm}`}>
         <div className={styles.col}>
           {col1.map((seat) => (
@@ -80,10 +72,10 @@ export default function BusLayout({takenSeats, selectedSeats, onSeatSelectionCha
               
               key={seat}
               onClick={() => selectHandler(seat)}
-              className={`${styles.seat} ${
+              className={`${styles.seats} ${
                 takenSeats.includes(seat)
                   ? styles.taken
-                  : selectedSeatsState.includes(seat)
+                  : selectedSeats.includes(seat)
                   ? styles.selected
                   : ""
               }`}
@@ -97,10 +89,10 @@ export default function BusLayout({takenSeats, selectedSeats, onSeatSelectionCha
             <div
               key={seat}
               onClick={() => selectHandler(seat)}
-              className={`${styles.seat} ${
+              className={`${styles.seats} ${
                 takenSeats.includes(seat)
                   ? styles.taken
-                  : selectedSeatsState.includes(seat)
+                  : selectedSeats.includes(seat)
                   ? styles.selected
                   : ""
               }`}
@@ -114,10 +106,10 @@ export default function BusLayout({takenSeats, selectedSeats, onSeatSelectionCha
             <div
               key={seat}
               onClick={() => selectHandler(seat)}
-              className={`${styles.seat} ${
+              className={`${styles.seats} ${
                 takenSeats.includes(seat)
                   ? styles.taken
-                  : selectedSeatsState.includes(seat)
+                  : selectedSeats.includes(seat)
                   ? styles.selected
                   : ""
               }`}
@@ -131,10 +123,10 @@ export default function BusLayout({takenSeats, selectedSeats, onSeatSelectionCha
             <div
               key={seat}
               onClick={() => selectHandler(seat)}
-              className={`${styles.seat} ${
+              className={`${styles.seats} ${
                 takenSeats.includes(seat)
                   ? styles.taken
-                  : selectedSeatsState.includes(seat)
+                  : selectedSeats.includes(seat)
                   ? styles.selected
                   : ""
               }`}
@@ -144,6 +136,7 @@ export default function BusLayout({takenSeats, selectedSeats, onSeatSelectionCha
           ))}
         </div>
       </div>
+      }
     </>
   );
 }

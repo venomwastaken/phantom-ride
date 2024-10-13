@@ -1,4 +1,5 @@
-import{ Schema, models, model } from 'mongoose';
+import { Document } from 'mongoose';
+import{ Schema, models, model, } from 'mongoose';
 
 export interface IBooking extends Document {
     _id: string,
