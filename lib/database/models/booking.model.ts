@@ -13,6 +13,7 @@ export interface IBooking extends Document {
     seats: string;
     bookingDate: Date;
     reference: string;
+    tickets: string;
     status?: 'pending' | 'completed'
 };
 
@@ -27,6 +28,7 @@ const BookingSchema: Schema = new Schema({
   seats: {type: String, required: true},
   bookingDate: {type: Date, default: Date.now},
   reference: {type:String, required: true},  // This should match Paystack's reference
+  tickets: {type: String, required: true},
   status: { type: String, default: 'pending' }
 });
 

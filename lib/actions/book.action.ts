@@ -14,13 +14,15 @@ type BookingProps = {
     phone:string,
     seats:string,
     reference:string,
+    busId : string;
     status?:string,
   };
 
 export const makeBooking = async (booking: BookingProps) => {
 try {
     await dbConnect();
-    const newbooking = await Booking.create(booking);
+    const tickets = [booking.seats.split(", ").map((seatNumber) => `${booking.busId}${seatNumber}`)]
+    const newbooking = await Booking.create({...booking, tickets: tickets.join(", ")});
     return JSON.parse(JSON.stringify(newbooking));
     
 } catch (error) {

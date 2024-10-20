@@ -22,14 +22,14 @@ export async function POST(req: Request) {
     if (hash === req.headers.get('x-paystack-signature')) {
       // Process the event here
       if(body.event==="charge.success"){
-        const {reference, busId, seats, name, email, phone} = await findBooking(body.data.reference)
+        const {reference, busId, seats, name, email, phone, tickets} = await findBooking(body.data.reference)
         await updateSeats({busId:busId, seatsToBook: seats.split(", ")})
         const updatedBooking = await updateBookingStatus(reference)
         // const notificationStat = await sendNotification({
         //   name: name,
         //   email: email,
         //   phone: `233${phone.substring(1)}`,
-        //   ticket: reference,
+        //   tickets: tickets,
         // })
         console.log(updatedBooking, )//notificationStat)
        

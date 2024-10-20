@@ -1,7 +1,7 @@
 'use server'
 import nodemailer from 'nodemailer';
 type Recipient = {
-    ticket: string;
+    tickets: string;
   };
   
   type RecipientData = {
@@ -14,7 +14,7 @@ async function sendSms(recipients : RecipientData) {
   try {
     const data = {
       sender: 'PHANTOMRIDE',
-      message: `We are delighted to confirm your booking with Phantom Ride! Please note that you must present your ticket code "<%ticket%>" on the day of departure. We are confident that you will have a smooth ride, and we look forward to having you on board. Thank you for choosing Phantom Ride.`,
+      message: `We are delighted to confirm your booking with Phantom Ride! Please note that you must present your ticket code(s) [<%tickets%>] on the day of departure. We are confident that you will have a smooth ride, and we look forward to having you on board. Thank you for choosing Phantom Ride.`,
       recipients: recipients,
     };
 
@@ -44,10 +44,10 @@ async function sendSms(recipients : RecipientData) {
 type EmailPayload = {
   to: string;
   name: string;
-  ticket: string;
+  tickets: string;
 };
 
-async function sendEmail({ to, name, ticket}: EmailPayload) {
+async function sendEmail({ to, name, tickets}: EmailPayload) {
   try {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -62,7 +62,7 @@ async function sendEmail({ to, name, ticket}: EmailPayload) {
       to : to,
       subject : "Booking Confirmed!!!", 
       text : `Hey ${name}, We are delighted to confirm your booking with Phantom Ride! 
-              Please note that you must present your ticket code "${ticket}" on the day of departure. 
+              Please note that you must present your ticket code(s) [${tickets}] on the day of departure. 
               We are confident that you will have a smooth ride and look forward to having you on board. 
               Thank you for choosing Phantom Ride.`, 
       html : `<!DOCTYPE html>
@@ -111,7 +111,7 @@ async function sendEmail({ to, name, ticket}: EmailPayload) {
                             <h1>Booking Confirmation</h1>
                             <p>Hey ${name},</p>
                             <p>We are delighted to confirm your booking with Phantom Ride! Please note that you must present your ticket code 
-                            <span class="ticket-code">"${ticket}"</span> on the day of departure.</p>
+                            <span class="ticket-code(s)">[${tickets}]</span> on the day of departure.</p>
                             <p>We are confident that you will have a smooth ride and look forward to having you on board. Thank you for choosing Phantom Ride.</p>
                             <p class="footer">© 2024 Phantom Ride. All rights reserved.</p>
                         </div>
@@ -134,13 +134,13 @@ type customerDetails = {
     name: string
     email: string;
     phone: string;
-    ticket: string;
+    tickets: string;
 }
 
-export async function sendNotification({name, email, phone, ticket}: customerDetails) {
+export async function sendNotification({name, email, phone, tickets}: customerDetails) {
     try {
-        const smsStat = await sendSms({[phone]:{ticket: ticket}});
-        const emailStat = await sendEmail({to: email, name:name, ticket:ticket})
+        const smsStat = await sendSms({[phone]:{tickets: tickets}});
+        const emailStat = await sendEmail({to: email, name:name, tickets:tickets})
         console.log(smsStat, emailStat);
     } catch (error) {
         console.log(error)

@@ -24,7 +24,8 @@ export default function Home() {
           <div>
             <Image
               src="/assets/herophoto.png"
-              alt="Picture of the author"
+              alt="Hero photo"
+              loading="eager"
               sizes="100vw"
               style={{
                 width: "100%",

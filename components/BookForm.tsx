@@ -124,6 +124,7 @@ export default function BookForm({
       setIsSubmitting(false); // End submitting
     }
     form.reset();
+    selectedSeats([])
     console.log(values);
   }
 
