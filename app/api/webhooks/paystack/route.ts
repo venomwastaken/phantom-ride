@@ -25,12 +25,12 @@ export async function POST(req: Request) {
         const {reference, busId, seats, name, email, phone, tickets} = await findBooking(body.data.reference)
         await updateSeats({busId:busId, seatsToBook: seats.split(", ")})
         const updatedBooking = await updateBookingStatus(reference)
-        // const notificationStat = await sendNotification({
-        //   name: name,
-        //   email: email,
-        //   phone: `233${phone.substring(1)}`,
-        //   tickets: tickets,
-        // })
+        const notificationStat = await sendNotification({
+          name: name,
+          email: email,
+          phone: `233${phone.substring(1)}`,
+          tickets: tickets,
+        })
         console.log(updatedBooking, )//notificationStat)
        
       }

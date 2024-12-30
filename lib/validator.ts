@@ -22,5 +22,14 @@ export const formSchema = z.object({
   seats: z.string().min(2, {
     message: "Select at least 1 seat.",
   }),
+  agent: z.string(),
+
+  emergencyContactName: z.string().min(2, {
+    message: "Enter your emergency contact name.",
+  }),
+  emergencyContactPhone: z.string().length(10, {
+    message: "Phone number must be 10 characters.",
+  }),
+  luggage: z.array(z.string()),
 })
 

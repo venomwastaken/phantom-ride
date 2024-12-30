@@ -14,7 +14,7 @@ const pickUps = () => {
         </h2>
         <p className={`mt-3 ${styles.p} text-center`}>We currently have three pickup locations and more to be added...</p>
         <div className="flex flex-col md:flex-row mt-10 gap-7">
-          <Link href="#">
+          <Link href="https://maps.app.goo.gl/NRnkCSmFAvS9C8hE8">
             <div className={styles.cardPickup}>
             <Image
                 src="/assets/icons/pin_drop_green.png"
@@ -24,10 +24,11 @@ const pickUps = () => {
                 height={90}
               />
               <h3 className="text-xl font-semibold mt-4">Accra</h3>
-              <p className="mt-2">Circle,<br /> Vip Bus Terminal</p>
+              <p className="mt-2">Accra Mall <br/>
+                                  Tetteh Quarshie Spintex</p>
             </div>
           </Link>
-          <Link href="#">
+          <Link href="https://maps.app.goo.gl/deaQjtD9Uodfu8VZ9">
             <div className={styles.cardPickup}>
             <Image
                 src="/assets/icons/pin_drop_green.png"
@@ -37,10 +38,10 @@ const pickUps = () => {
                 height={90}
               />
               <h3 className="text-xl font-semibold mt-4">Tema</h3>
-              <p className="mt-2">Community 1,<br /> Vip Bus Terminal</p>
+              <p className="mt-2">Community 1,<br /> Vvip Bus Station</p>
             </div>
           </Link>
-          <Link href="#">
+          <Link href="https://maps.app.goo.gl/usWyKcdRAy83mWsE6">
             <div className={styles.cardPickup}>
             <Image
                 src="/assets/icons/pin_drop_green.png"
@@ -50,7 +51,7 @@ const pickUps = () => {
                 height={90}
               />
               <h3 className="text-xl font-semibold mt-4">Adenta</h3>
-              <p className="mt-2">Adenta,<br /> Vip Bus Terminal</p>
+              <p className="mt-2">Adenta,<br />KFC Adenta</p>
             </div>
           </Link>
         </div>

@@ -16,7 +16,7 @@ const contact = () => {
         <h2 className='text-3xl medium lg:mt-20 lg:text-4xl'>Call Us</h2>
         <p className='mt-6'>You can also call any of the following:</p>
             <ul className=' list-disc ps-10 underline font-medium mb-20'>
-                <li><Link href="tel:+23324XXXXXXX" className='hover:opacity-70'>+23324XXXXXXX</Link></li>
+                <li><Link href="tel:+233243980353" className='hover:opacity-70'>+233243980353</Link></li>
                 <li><Link href="tel:+23324XXXXXXX" className='hover:opacity-70'>+23324XXXXXXX</Link></li>
                 <li><Link href="tel:+23324XXXXXXX" className='hover:opacity-70'>+23324XXXXXXX</Link></li>
             </ul>

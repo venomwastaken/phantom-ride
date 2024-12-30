@@ -22,7 +22,7 @@ const Navbar: React.FC<NavbarProps> = ({ color = 'white' }) => {
         </div>
         <div>
           <button className="mt-0 hidden lg:block">
-            <Link href="/book">Book Ride</Link>
+            <Link className='button' href="/book">Book Ride</Link>
           </button>
           <Mobilenav color={color} />
         </div>

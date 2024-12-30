@@ -3,7 +3,6 @@ import styles from "../app/book/bs.module.css";
 import { useBusContext } from "./BusContext";
 import BusLoading from "./BusLoading";
 
-
 export default function BusLayout() {
   const col1 = [
     "01",
@@ -46,14 +45,13 @@ export default function BusLayout() {
     "34",
   ];
 
-  const {takenSeats, selectedSeats, setSelectedSeats, isLoadingSeats} = useBusContext()
-
-
+  const { takenSeats, selectedSeats, setSelectedSeats, isLoadingSeats, busId } =
+    useBusContext();
 
   function selectHandler(id: string) {
     if (!takenSeats.includes(id)) {
       setSelectedSeats(
-        (prevSelectedSeats : string[]) =>
+        (prevSelectedSeats: string[]) =>
           prevSelectedSeats.includes(id)
             ? prevSelectedSeats.filter((seat) => seat !== id) // Deselect if already selected
             : [...prevSelectedSeats, id] // Select new seat
@@ -61,82 +59,89 @@ export default function BusLayout() {
     }
   }
 
-
   return (
-    <> 
-      {isLoadingSeats? <BusLoading/>:
-      <div className={`${styles.busSeats} ${styles.cardForm}`}>
-        <div className={styles.col}>
-          {col1.map((seat) => (
-            <div
-              
-              key={seat}
-              onClick={() => selectHandler(seat)}
-              className={`${styles.seats} ${
-                takenSeats.includes(seat)
-                  ? styles.taken
-                  : selectedSeats.includes(seat)
-                  ? styles.selected
-                  : ""
-              }`}
-            >
-              {seat}
+    <>
+      {isLoadingSeats ? (
+        <BusLoading />
+      ) : (
+        <div className={`${styles.cardForm} justify-self-end ${styles.contain}`}>
+          <div>
+            <p className={`${"mx-[2px] mt-2 text-xs text-gray-500 bold"}`}>
+              BusId: {busId !== null ? busId : "XXXXXXX"}
+            </p>
+            <div className={`${styles.busSeats}`}>
+              <div className={styles.col}>
+                {col1.map((seat) => (
+                  <div
+                    key={seat}
+                    onClick={() => selectHandler(seat)}
+                    className={`${styles.seats} ${
+                      takenSeats.includes(seat)
+                        ? styles.taken
+                        : selectedSeats.includes(seat)
+                        ? styles.selected
+                        : ""
+                    }`}
+                  >
+                    {seat}
+                  </div>
+                ))}
+              </div>
+              <div className={styles.col}>
+                {col2.map((seat) => (
+                  <div
+                    key={seat}
+                    onClick={() => selectHandler(seat)}
+                    className={`${styles.seats} ${
+                      takenSeats.includes(seat)
+                        ? styles.taken
+                        : selectedSeats.includes(seat)
+                        ? styles.selected
+                        : ""
+                    }`}
+                  >
+                    {seat}
+                  </div>
+                ))}
+              </div>
+              <div className={`${styles.col} ${styles.middle}`}>
+                {col3.map((seat) => (
+                  <div
+                    key={seat}
+                    onClick={() => selectHandler(seat)}
+                    className={`${styles.seats} ${
+                      takenSeats.includes(seat)
+                        ? styles.taken
+                        : selectedSeats.includes(seat)
+                        ? styles.selected
+                        : ""
+                    }`}
+                  >
+                    {seat}
+                  </div>
+                ))}
+              </div>
+              <div className={styles.col}>
+                {col4.map((seat) => (
+                  <div
+                    key={seat}
+                    onClick={() => selectHandler(seat)}
+                    className={`${styles.seats} ${
+                      takenSeats.includes(seat)
+                        ? styles.taken
+                        : selectedSeats.includes(seat)
+                        ? styles.selected
+                        : ""
+                    }`}
+                  >
+                    {seat}
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+          </div>
         </div>
-        <div className={styles.col}>
-          {col2.map((seat) => (
-            <div
-              key={seat}
-              onClick={() => selectHandler(seat)}
-              className={`${styles.seats} ${
-                takenSeats.includes(seat)
-                  ? styles.taken
-                  : selectedSeats.includes(seat)
-                  ? styles.selected
-                  : ""
-              }`}
-            >
-              {seat}
-            </div>
-          ))}
-        </div>
-        <div className={`${styles.col} ${styles.middle}`}>
-          {col3.map((seat) => (
-            <div
-              key={seat}
-              onClick={() => selectHandler(seat)}
-              className={`${styles.seats} ${
-                takenSeats.includes(seat)
-                  ? styles.taken
-                  : selectedSeats.includes(seat)
-                  ? styles.selected
-                  : ""
-              }`}
-            >
-              {seat}
-            </div>
-          ))}
-        </div>
-        <div className={styles.col}>
-          {col4.map((seat) => (
-            <div
-              key={seat}
-              onClick={() => selectHandler(seat)}
-              className={`${styles.seats} ${
-                takenSeats.includes(seat)
-                  ? styles.taken
-                  : selectedSeats.includes(seat)
-                  ? styles.selected
-                  : ""
-              }`}
-            >
-              {seat}
-            </div>
-          ))}
-        </div>
-      </div>
-      }
+      )}
     </>
   );
 }

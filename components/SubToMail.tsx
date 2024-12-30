@@ -67,7 +67,7 @@ export default function MailForm() {
                 </FormItem>
               )}
             />
-            <button type="submit">Submit</button>
+            <button className="button" type="submit">Submit</button>
           </form>
         </Form>
       )}

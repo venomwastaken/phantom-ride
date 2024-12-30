@@ -13,6 +13,10 @@ type BookingProps = {
     email: string,
     phone:string,
     seats:string,
+    agent: string;
+    emergencyContactName: string;
+    emergencyContactPhone: string;
+    luggage: string[];
     reference:string,
     busId : string;
     status?:string,
@@ -22,7 +26,7 @@ export const makeBooking = async (booking: BookingProps) => {
 try {
     await dbConnect();
     const tickets = [booking.seats.split(", ").map((seatNumber) => `${booking.busId}${seatNumber}`)]
-    const newbooking = await Booking.create({...booking, tickets: tickets.join(", ")});
+    const newbooking = await Booking.create({...booking, tickets: tickets.join(", "), luggage: booking.luggage.join(", ")});
     return JSON.parse(JSON.stringify(newbooking));
     
 } catch (error) {

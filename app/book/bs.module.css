@@ -2,11 +2,11 @@
     display: grid;
     grid-template-columns: 40% 60%;
     margin-top: 5vh;
+    gap: 15px;
 }
 
 .busSeats {
     display: flex;
-    justify-self: end;
     height: fit-content;
 }
 
@@ -21,11 +21,11 @@
 }
 
 .cardForm {
-    width:max-content ;
+    width:max-content;
     border: solid #ededed 2px;
     padding: 20px;
     border-radius: 8px;
-    margin-left: 15px;
+
 }
 
 .whitebgInput{
@@ -49,23 +49,21 @@
     border-radius: 8px;
     justify-content: center;
     margin: 2px;
-    background-color: rgba(127, 127, 127, 0.06); /* Default background */
-    border-color: #ebebeb; /* Default border color */
+    background-color: rgba(127, 127, 127, 0.06); 
+    border-color: #ebebeb; 
     transition: background-color 0.3s, border-color 0.3s;
   }
   
   .seats.taken {
-    background-color: rgba(255, 0, 0, 0.06); /* Red background for taken seats */
-    border-color: rgb(255, 127, 127); /* Red border for taken seats */
-    cursor: not-allowed; /* Disable cursor */
+    background-color: rgba(255, 0, 0, 0.06); 
+    border-color: rgb(255, 127, 127); 
+    cursor: not-allowed; 
   }
   
   .seats.selected {
-    background-color: rgba(0, 255, 0, 0.06); /* Green background for selected seats */
-    border-color: var(--mylime); /* Lime border for selected seats */
+    background-color: rgba(0, 255, 0, 0.06); 
+    border-color: var(--mylime); 
   }
-  
-  
 
 
 @media (max-width:1024px) {
@@ -79,13 +77,15 @@
         width: 70%;
         justify-self: center;
     }
-    
-    .busSeats {
-        justify-content: center;
-    }
 
     .whitebgInput{
         max-width: 100%;
+    }
+
+    .contain {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 }
 

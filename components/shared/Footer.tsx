@@ -73,11 +73,6 @@ const Footer = () => {
                       </a>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <a href="https://www.snapchat.com/add/mr.perry27?share_id=BZvgYKyP-xk&locale=en-GB">
-                        Perry
-                      </a>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
                       <a href="https://www.snapchat.com/add/totchere1?share_id=TwyHdQf_YQ0&locale=en-GB">
                         Thelma
                       </a>

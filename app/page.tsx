@@ -42,12 +42,12 @@ export default function Home() {
       <section className="wrapper section">
         <div className="flex flex-col justify-center max-w-lg">
           <h2 className="h2 bold">We prioritize your saftey and comfort</h2>
-          <p>
+          <p className="m-0">
             From home to school and back home, we take you safely without
             compromising your comfort and convenience. Book straight from home
             and we pick you up at your terminal. Check out our pickup points.
           </p>
-          <button type="button" className="w-fit mt-1">
+          <button type="button" className="w-fit mt-1 button">
             <Link href="/pickups">Pickup Point</Link>
           </button>
         </div>
@@ -96,7 +96,7 @@ export default function Home() {
               confirmation and enjoy the ride.
             </li>
           </ul>
-          <button type="button" className="w-fit mt-3">
+          <button type="button" className="w-fit mt-3 button">
             <Link href="/book">Book Ride</Link>
           </button>
         </div>

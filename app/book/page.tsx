@@ -2,14 +2,13 @@
 
 
 import Navbar from "@/components/shared/Navbar";
-import { Suspense } from "react";
 import BusLayout from "@/components/BusLayout";
 import BookForm from "@/components/BookForm";
 import styles from "./bs.module.css";
 import { useSearchParams } from "next/navigation";
 import BusWrapper from "@/components/BusContext";
 
-export default function Test() {
+export default function Book() {
   const searchParams = useSearchParams();
   const pickup = searchParams.get("pickup") || "";
   const date = searchParams.get("date") || "";
@@ -19,8 +18,7 @@ export default function Test() {
     <BusWrapper>
       <Navbar />
         <div className={`${styles.bookingContainer} wrapper`}>
-          <BusLayout/>
-
+          <div><BusLayout/></div>
           <BookForm
             pickup={pickup}
             date={date}

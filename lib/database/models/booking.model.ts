@@ -11,6 +11,9 @@ export interface IBooking extends Document {
     email: string;
     phone: string;
     seats: string;
+    agent: string;
+    emergencyContactName: string;
+    emergencyContactPhone: string;
     bookingDate: Date;
     reference: string;
     tickets: string;
@@ -26,6 +29,10 @@ const BookingSchema: Schema = new Schema({
   email: {type: String, required: true},
   phone: {type: String, required: true},
   seats: {type: String, required: true},
+  agent: {type: String, default: 'Daniel'},
+  emergencyContactName: {type: String, required: true},
+  emergencyContactPhone: {type: String, required: true},
+  luggage: {type: String},
   bookingDate: {type: Date, default: Date.now},
   reference: {type:String, required: true},  // This should match Paystack's reference
   tickets: {type: String, required: true},

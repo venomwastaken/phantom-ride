@@ -76,7 +76,7 @@ const HomeForm = () => {
               </FormItem>
             )}
           />
-          <button type="submit">Book Ride</button>
+          <button className="button" type="submit">Book Ride</button>
         </form>
       </Form>
     </div>

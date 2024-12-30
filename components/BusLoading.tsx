@@ -1,7 +1,6 @@
 import styles from "../app/book/bs.module.css";
 import { Skeleton } from "./ui/skeleton";
 
-
 export default function BusLoading() {
   const col1 = [
     "01",
@@ -44,29 +43,45 @@ export default function BusLoading() {
     "34",
   ];
 
-
   return (
     <>
-      <div className={`${styles.busSeats} ${styles.cardForm}`}>
-        <div className={styles.col}>
-          {col1.map((seat) => (
-           <Skeleton key = {seat} className="h-[47px] w-[47px] m-[2px] rounded-[8px]" />
-          ))}
-        </div>
-        <div className={styles.col}>
-          {col2.map((seat) => (
-            <Skeleton key = {seat} className="h-[47px] w-[47px] m-[2px] rounded-[8px]" />
-          ))}
-        </div>
-        <div className={`${styles.col} ${styles.middle}`}>
-          {col3.map((seat) => (
-            <Skeleton key = {seat} className="h-[47px] w-[47px] m-[2px] rounded-[8px]" />
-          ))}
-        </div>
-        <div className={styles.col}>
-          {col4.map((seat) => (
-            <Skeleton key = {seat} className="h-[47px] w-[47px] m-[2px] rounded-[8px]" />
-          ))}
+      <div className={`${styles.cardForm} justify-self-end ${styles.contain}`}>
+        <div>
+          <Skeleton className="h-5 w-28 mt-2 mb-3 mx-[2px]" />
+          <div className={`${styles.busSeats}`}>
+            <div className={styles.col}>
+              {col1.map((seat) => (
+                <Skeleton
+                  key={seat}
+                  className="h-[47px] w-[47px] m-[2px] rounded-[8px]"
+                />
+              ))}
+            </div>
+            <div className={styles.col}>
+              {col2.map((seat) => (
+                <Skeleton
+                  key={seat}
+                  className="h-[47px] w-[47px] m-[2px] rounded-[8px]"
+                />
+              ))}
+            </div>
+            <div className={`${styles.col} ${styles.middle}`}>
+              {col3.map((seat) => (
+                <Skeleton
+                  key={seat}
+                  className="h-[47px] w-[47px] m-[2px] rounded-[8px]"
+                />
+              ))}
+            </div>
+            <div className={styles.col}>
+              {col4.map((seat) => (
+                <Skeleton
+                  key={seat}
+                  className="h-[47px] w-[47px] m-[2px] rounded-[8px]"
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </>
