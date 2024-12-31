@@ -17,8 +17,8 @@ const contact = () => {
         <p className='mt-6'>You can also call any of the following:</p>
             <ul className=' list-disc ps-10 underline font-medium mb-20'>
                 <li><Link href="tel:+233243980353" className='hover:opacity-70'>+233243980353</Link></li>
-                <li><Link href="tel:+23324XXXXXXX" className='hover:opacity-70'>+23324XXXXXXX</Link></li>
-                <li><Link href="tel:+23324XXXXXXX" className='hover:opacity-70'>+23324XXXXXXX</Link></li>
+                <li><Link href="tel:+233509113689" className='hover:opacity-70'>+233509113689</Link></li>
+                <li><Link href="tel:+233509681084" className='hover:opacity-70'>+233509681084</Link></li>
             </ul>
         
     </section>
