@@ -36,7 +36,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
   const initialVals = {
     pickup: pickup ? pickup : "Accra",
     destination: "KNUST(Main Campus)",
-    date: date ? date : "Saturday",
+    date: date ? date : "Saturday (11/01/2025)",
     fullName: "",
     email: "",
     phone: "",
