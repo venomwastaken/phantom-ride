@@ -24,7 +24,7 @@ try {
         const day = (date==="Saturday (11/01/2025)")? "SAT": "SUN"
         const newbusId = generateBusId(terminalCode, numberOfBuses + 1, day)
         const { availableSeats, takenSeats, _id, price, busId} = await Bus.create({pickup: pickup, date: date, 
-            price: (pickup === "Accra")? 1: 162, busId:newbusId });
+            price: (pickup === "Accra")? 153: 163, busId:newbusId });
         return { availableSeats, takenSeats, _id: _id.toString(), price, busId};
     }
     

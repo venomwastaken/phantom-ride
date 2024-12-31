@@ -302,7 +302,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
                     <Dropdown
                       onChangeHandler={field.onChange}
                       value={field.value}
-                      items={["Daniel", "Thelma", "Derrick"]}
+                      items={["Daniel", "Thelma", "Derrick", "Bismark", "Desmond"]}
                       placeholder="Agent"
                       disabled={isSubmitting} // Disable during submission
                     />
