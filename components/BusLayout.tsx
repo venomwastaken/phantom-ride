@@ -66,7 +66,8 @@ export default function BusLayout() {
       ) : (
         <div className={`${styles.cardForm} justify-self-end ${styles.contain}`}>
           <div>
-            <p className={`${"mx-[2px] mt-2 text-xs text-gray-500 bold"}`}>
+            <h4 className="text-base font-medium my-0 mx-[2px]">Select a seat</h4>
+            <p className="text-[0.8rem] text-muted-foreground mt-1 mx-[2px]">
               BusId: {busId !== null ? busId : "XXXXXXX"}
             </p>
             <div className={`${styles.busSeats}`}>

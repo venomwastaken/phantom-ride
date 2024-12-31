@@ -47,7 +47,8 @@ export default function BusLoading() {
     <>
       <div className={`${styles.cardForm} justify-self-end ${styles.contain}`}>
         <div>
-          <Skeleton className="h-5 w-28 mt-2 mb-3 mx-[2px]" />
+          <Skeleton className="h-5 w-28 mt-2 mb-2 mx-[2px]" />
+          <Skeleton className="h-5 w-[118px] mt-1 mb-2 mx-[2px]" />
           <div className={`${styles.busSeats}`}>
             <div className={styles.col}>
               {col1.map((seat) => (

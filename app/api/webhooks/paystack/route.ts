@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { findBooking, updateBookingStatus } from '@/lib/actions/book.action';
 import { updateSeats } from '@/lib/actions/bus.action';
-import Booking from '@/lib/database/models/booking.model';
 import { sendNotification } from '@/lib/actions/notification.actions';
+import { appendData } from '@/lib/actions/sheets.action';
 
 const secret = process.env.PAYSTACK_SECRET_KEY!;
 
@@ -22,20 +22,23 @@ export async function POST(req: Request) {
     if (hash === req.headers.get('x-paystack-signature')) {
       // Process the event here
       if(body.event==="charge.success"){
-        const {reference, busId, seats, name, email, phone, tickets} = await findBooking(body.data.reference)
+        const { pickup, destination, date, fullName, agent, emergencyContactName, emergencyContactPhone, bookingDate
+                ,reference, busId, seats, name, email, phone, tickets} = await findBooking(body.data.reference)
+
         await updateSeats({busId:busId, seatsToBook: seats.split(", ")})
-        const updatedBooking = await updateBookingStatus(reference)
-        const notificationStat = await sendNotification({
+        await updateBookingStatus(reference)
+        await sendNotification({
           name: name,
           email: email,
           phone: `233${phone.substring(1)}`,
           tickets: tickets,
         })
-        console.log(updatedBooking, )//notificationStat)
-       
+
+        const values = [busId, pickup, destination, date, fullName, email, phone, seats, 
+                        agent, emergencyContactName, emergencyContactPhone, bookingDate, reference, tickets]
+
+        await appendData(values)
       }
-      //await Booking.findOneAndUpdate({reference:"3f9on44wn4"}, {seats:body.json.stringify()})
-      console.log('Paystack event:', body);
 
       // Return a success response
       return NextResponse.json({ message: 'Webhook received and processed' }, { status: 200 });

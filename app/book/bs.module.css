@@ -1,7 +1,7 @@
 .bookingContainer {
     display: grid;
     grid-template-columns: 40% 60%;
-    margin-top: 5vh;
+    margin-top: 3vh;
     gap: 15px;
 }
 

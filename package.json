@@ -22,6 +22,8 @@
     "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dotenv": "^16.4.7",
+    "googleapis": "^144.0.0",
     "lucide-react": "^0.440.0",
     "mongodb": "^6.9.0",
     "mongoose": "^8.6.2",

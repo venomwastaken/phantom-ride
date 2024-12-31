@@ -68,7 +68,7 @@ const HomeForm = () => {
                   <Dropdown
                     onChangeHandler={field.onChange}
                     value={field.value}
-                    items={["Saturday", "Sunday"]}
+                    items={["Saturday (11/01/2025)", "Sunday (12/01/2025)"]}
                     placeholder="Select a Date"
                   />
                 </FormControl>

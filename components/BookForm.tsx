@@ -216,7 +216,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
                     <Dropdown
                       onChangeHandler={field.onChange}
                       value={field.value}
-                      items={["Saturday", "Sunday"]}
+                      items={["Saturday (11/01/2025)", "Sunday (12/01/2025)"]}
                       placeholder="Date"
                       disabled={isSubmitting} // Disable during submission
                     />
@@ -354,7 +354,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
                   <div className="mb-4">
                     <FormLabel className="text-base">Luggage</FormLabel>
                     <FormDescription className="mt-1">
-                      Which of these do you have as luggage?
+                      Which of these do you have in addition to as luggage?<br/> (Leave empty if none)
                     </FormDescription>
                   </div>
                   {luggageList.map((item) => (
@@ -396,7 +396,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
             />
 
             <p className="mt-[15px] text-xs text-gray-500 bold">
-              Price: GHS {price !== null ? price * selectedSeats.length : 0}.00
+              Price to pay: GHS {price !== null ? price * selectedSeats.length : 0}.00
             </p>
             <button
               type="submit"
