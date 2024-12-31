@@ -73,8 +73,8 @@ export default function BookForm({ pickup, date}: bookFormProps) {
       label: "TV",
     },
     {
-      id: "micriwave",
-      label: "Micriwave",
+      id: "microwave",
+      label: "Microwave",
     },
   ] as const;
 

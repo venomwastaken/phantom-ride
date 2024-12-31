@@ -21,7 +21,7 @@ try {
     } else {
         const numberOfBuses = (await Bus.find({pickup:pickup, date:date})).length
         const terminalCode = (pickup==="Tema")? "TM":(pickup==="Accra")? "AC": "AD"
-        const day = (date==="Saturday")? "SAT": "SUN"
+        const day = (date==="Saturday (11/01/2025)")? "SAT": "SUN"
         const newbusId = generateBusId(terminalCode, numberOfBuses + 1, day)
         const { availableSeats, takenSeats, _id, price, busId} = await Bus.create({pickup: pickup, date: date, 
             price: (pickup === "Accra")? 152: 162, busId:newbusId });
