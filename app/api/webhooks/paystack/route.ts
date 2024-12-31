@@ -4,7 +4,6 @@ import crypto from 'crypto';
 import { findBooking, updateBookingStatus } from '@/lib/actions/book.action';
 import { updateSeats } from '@/lib/actions/bus.action';
 import { sendNotification } from '@/lib/actions/notification.actions';
-import { appendData } from '@/lib/actions/sheets.action';
 
 const secret = process.env.PAYSTACK_SECRET_KEY!;
 
@@ -22,8 +21,7 @@ export async function POST(req: Request) {
     if (hash === req.headers.get('x-paystack-signature')) {
       // Process the event here
       if(body.event==="charge.success"){
-        const { pickup, destination, date, fullName, agent, emergencyContactName, emergencyContactPhone, bookingDate
-                ,reference, busId, seats, name, email, phone, tickets} = await findBooking(body.data.reference)
+        const { reference, busId, seats, name, email, phone, tickets} = await findBooking(body.data.reference)
 
         await updateSeats({busId:busId, seatsToBook: seats.split(", ")})
         await updateBookingStatus(reference)
@@ -34,10 +32,7 @@ export async function POST(req: Request) {
           tickets: tickets,
         })
 
-        const values = [busId, pickup, destination, date, fullName, email, phone, seats, 
-                        agent, emergencyContactName, emergencyContactPhone, bookingDate, reference, tickets]
 
-        await appendData(values)
       }
 
       // Return a success response
