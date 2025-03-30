@@ -20,11 +20,11 @@ try {
       
     } else {
         const numberOfBuses = (await Bus.find({pickup:pickup, date:date})).length
-        const terminalCode = (pickup==="Tema")? "TM":(pickup==="Accra")? "AC": "AD"
-        const day = (date==="Saturday (11/01/2025)")? "SAT": "SUN"
+        const terminalCode = (pickup==="Tema(Community 1)")? "TM":(pickup==="Accra(Circle)")? "AC": "AD"
+        const day = (date==="Saturday (26/04/2025)")? "SAT": "FRI"
         const newbusId = generateBusId(terminalCode, numberOfBuses + 1, day)
         const { availableSeats, takenSeats, _id, price, busId} = await Bus.create({pickup: pickup, date: date, 
-            price: (pickup === "Accra")? 153: 163, busId:newbusId });
+            price: (pickup === "Accra")? 1: 163, busId:newbusId });
         return { availableSeats, takenSeats, _id: _id.toString(), price, busId};
     }
     

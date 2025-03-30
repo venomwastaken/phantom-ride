@@ -34,7 +34,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
 
   const [price, setPrice] = useState<number>(0);
   const initialVals = {
-    pickup: pickup ? pickup : "Accra",
+    pickup: pickup ? pickup : "Accra(Circle)",
     destination: "KNUST(Main Campus)",
     date: date ? date : "Saturday (11/01/2025)",
     fullName: "",
@@ -173,24 +173,6 @@ export default function BookForm({ pickup, date}: bookFormProps) {
           >
             <FormField
               control={form.control}
-              name="pickup"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Dropdown
-                      onChangeHandler={field.onChange}
-                      value={field.value}
-                      items={["Accra", "Tema", "Adenta"]}
-                      placeholder="Pickup Location"
-                      disabled={isSubmitting} // Disable during submission
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="destination"
               render={({ field }) => (
                 <FormItem>
@@ -209,6 +191,24 @@ export default function BookForm({ pickup, date}: bookFormProps) {
             />
             <FormField
               control={form.control}
+              name="pickup"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Dropdown
+                      onChangeHandler={field.onChange}
+                      value={field.value}
+                      items={["Accra(Circle)", "Tema(Community 1)", "Adenta(Adenta KFC)"]}
+                      placeholder="Drop Off Location"
+                      disabled={isSubmitting} // Disable during submission
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="date"
               render={({ field }) => (
                 <FormItem>
@@ -216,7 +216,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
                     <Dropdown
                       onChangeHandler={field.onChange}
                       value={field.value}
-                      items={["Saturday (11/01/2025)", "Sunday (12/01/2025)"]}
+                      items={["Friday (25/04/2025)", "Saturday (26/04/2025)"]}
                       placeholder="Date"
                       disabled={isSubmitting} // Disable during submission
                     />

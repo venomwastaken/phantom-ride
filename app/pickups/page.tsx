@@ -10,9 +10,9 @@ const pickUps = () => {
       <Navbar />
       <section className="wrapper flex flex-col items-center">
         <h2 className="text-3xl medium lg:mt-10 lg:text-4xl">
-          Pickup Locations
+          End Points
         </h2>
-        <p className={`mt-3 ${styles.p} text-center`}>We currently have three pickup locations and more to be added...</p>
+        <p className={`mt-3 ${styles.p} text-center`}>We currently have three end points and more to be added...</p>
         <div className="flex flex-col md:flex-row mt-10 gap-7">
           <Link href="https://maps.app.goo.gl/NRnkCSmFAvS9C8hE8">
             <div className={styles.cardPickup}>
@@ -24,8 +24,7 @@ const pickUps = () => {
                 height={90}
               />
               <h3 className="text-xl font-semibold mt-4">Accra</h3>
-              <p className="mt-2">Accra Mall <br/>
-                                  Tetteh Quarshie Spintex</p>
+              <p className="mt-2">Circle</p>
             </div>
           </Link>
           <Link href="https://maps.app.goo.gl/deaQjtD9Uodfu8VZ9">
@@ -38,7 +37,7 @@ const pickUps = () => {
                 height={90}
               />
               <h3 className="text-xl font-semibold mt-4">Tema</h3>
-              <p className="mt-2">Community 1,<br /> Vvip Bus Station</p>
+              <p className="mt-2">Community 1</p>
             </div>
           </Link>
           <Link href="https://maps.app.goo.gl/usWyKcdRAy83mWsE6">
@@ -51,7 +50,7 @@ const pickUps = () => {
                 height={90}
               />
               <h3 className="text-xl font-semibold mt-4">Adenta</h3>
-              <p className="mt-2">Adenta,<br />KFC Adenta</p>
+              <p className="mt-2">KFC Adenta</p>
             </div>
           </Link>
         </div>
