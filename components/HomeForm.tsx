@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import {Form,FormControl,FormField,FormItem,FormMessage,} from "@/components/ui/form";
 import Dropdown from "@/components/Dropdown";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const HomeForm = () => {
   type homeFormParams = {
@@ -12,9 +13,17 @@ const HomeForm = () => {
     date: string;
   };
 
+  const [dateDisable, setDateDisable] = useState<boolean>(false);
 
   const router = useRouter();
   const form = useForm<homeFormParams>();
+
+    useEffect(() => {
+      if(form.getValues("pickup") !== "Accra(Circle)") {
+        form.setValue("date", "Saturday (26/04/2025)");
+        setDateDisable(true);
+      }else {setDateDisable(false);}
+    }, [form.watch("pickup")]);
 
   function onSubmit(values: homeFormParams) {
     console.log(values);
@@ -30,6 +39,7 @@ const HomeForm = () => {
     if (values.date) {
       query.push(`date=${values.date}`);
     }
+
   
     // Build the final query string (join the query array with '&')
     const queryString = query.length > 0 ? `?${query.join('&')}` : '';
@@ -70,6 +80,7 @@ const HomeForm = () => {
                     value={field.value}
                     items={["Friday (25/04/2025)", "Saturday (26/04/2025)"]}
                     placeholder="Select a Date"
+                    disabled={dateDisable}
                   />
                 </FormControl>
                 <FormMessage />

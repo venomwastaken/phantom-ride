@@ -31,12 +31,16 @@ type bookFormProps = {
 };
 
 export default function BookForm({ pickup, date}: bookFormProps) {
+  if(pickup && pickup !== "Accra(Circle)") {
+    date = "Saturday (26/04/2025)";
+  }
 
   const [price, setPrice] = useState<number>(0);
+  const [dateDisable, setDateDisable] = useState<boolean>(false);
   const initialVals = {
     pickup: pickup ? pickup : "Accra(Circle)",
     destination: "KNUST(Main Campus)",
-    date: date ? date : "Friday (25/04/2025)",
+    date: date ? date : "Saturday (26/04/2025)",
     fullName: "",
     email: "",
     phone: "",
@@ -89,6 +93,10 @@ export default function BookForm({ pickup, date}: bookFormProps) {
           pickup: form.getValues("pickup"),
           date: form.getValues("date"),
         });
+        if(form.getValues("pickup") !== "Accra(Circle)") {
+          form.setValue("date", "Saturday (26/04/2025)");
+          setDateDisable(true);
+        }else {setDateDisable(false);}
         setSelectedSeats([]);
         setTakenSeats(bus?.takenSeats || []);
         setPrice(bus?.price || 0);
@@ -108,6 +116,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
   useEffect(() => {
     form.setValue("seats", selectedSeats.join(", "));
   }, [selectedSeats]);
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true); // Start submitting
@@ -218,7 +227,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
                       value={field.value}
                       items={["Friday (25/04/2025)", "Saturday (26/04/2025)"]}
                       placeholder="Date"
-                      disabled={isSubmitting} // Disable during submission
+                      disabled={isSubmitting || dateDisable} // Disable during submission
                     />
                   </FormControl>
                   <FormMessage />
@@ -302,7 +311,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
                     <Dropdown
                       onChangeHandler={field.onChange}
                       value={field.value}
-                      items={["Daniel", "Thelma", "Derrick", "Bismark", "Desmond"]}
+                      items={["Daniel", "Thelma", "Derrick", "Bismark", "Desmond", "Palba"]}
                       placeholder="Agent"
                       disabled={isSubmitting} // Disable during submission
                     />

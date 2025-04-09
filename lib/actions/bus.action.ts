@@ -9,9 +9,15 @@ function generateBusId(terminalCode: string, busCount: number, day: string): str
   }
 
 export const getSeats = async ({pickup, date} : {pickup: string, date: string}) => {
+if(date === "Friday (25/04/2025)"){pickup = "Accra(Circle)";}
 try {
     await dbConnect();
     
+    if(date === "Friday (25/04/2025)" && pickup === "Accra(Circle)") {
+        const bus = await Bus.findOne({ pickup: pickup, date: date}, { availableSeats: true, takenSeats: true, _id: true, price: true, busId:true });
+        const { availableSeats, takenSeats, _id, price, busId } = bus;
+        return { availableSeats, takenSeats, _id: _id.toString(), price, busId };
+    }
 
     const bus = await Bus.findOne({ pickup: pickup, date: date, isFull: false}, { availableSeats: true, takenSeats: true, _id: true, price: true, busId:true });
     if (bus) {
