@@ -9,11 +9,11 @@ function generateBusId(terminalCode: string, busCount: number, day: string): str
   }
 
 export const getSeats = async ({pickup, date} : {pickup: string, date: string}) => {
-if(date === "Friday (25/04/2025)"){pickup = "Accra(Circle)";}
+if(date === "Sunday (27/04/2025)"){pickup = "Accra(Circle)";}
 try {
     await dbConnect();
     
-    if(date === "Friday (25/04/2025)" && pickup === "Accra(Circle)") {
+    if(date === "Sunday (27/04/2025)" && pickup === "Accra(Circle)") {
         const bus = await Bus.findOne({ pickup: pickup, date: date}, { availableSeats: true, takenSeats: true, _id: true, price: true, busId:true });
         const { availableSeats, takenSeats, _id, price, busId } = bus;
         return { availableSeats, takenSeats, _id: _id.toString(), price, busId };
@@ -27,7 +27,7 @@ try {
     } else {
         const numberOfBuses = (await Bus.find({pickup:pickup, date:date})).length
         const terminalCode = (pickup==="Tema(Community 1)")? "TM":(pickup==="Accra(Circle)")? "AC": "AD"
-        const day = (date==="Saturday (26/04/2025)")? "SAT": "FRI"
+        const day = (date==="Saturday (26/04/2025)")? "SAT": "SUN"
         const newbusId = generateBusId(terminalCode, numberOfBuses + 1, day)
         const { availableSeats, takenSeats, _id, price, busId} = await Bus.create({pickup: pickup, date: date, 
             price: (pickup === "Accra(Circle)")? 158: 173, busId:newbusId });

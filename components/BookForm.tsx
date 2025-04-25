@@ -225,7 +225,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
                     <Dropdown
                       onChangeHandler={field.onChange}
                       value={field.value}
-                      items={["Friday (25/04/2025)", "Saturday (26/04/2025)"]}
+                      items={["Saturday (26/04/2025)", "Sunday (27/04/2025)"]}
                       placeholder="Date"
                       disabled={isSubmitting || dateDisable} // Disable during submission
                     />
