@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import Dropdown from "@/components/Dropdown";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+//import { useEffect, useState } from "react";
 
 const HomeForm = () => {
   type homeFormParams = {
@@ -19,19 +19,19 @@ const HomeForm = () => {
     date: string;
   };
 
-  const [dateDisable, setDateDisable] = useState<boolean>(false);
+  //const [dateDisable, setDateDisable] = useState<boolean>(false);
 
   const router = useRouter();
   const form = useForm<homeFormParams>();
 
-  useEffect(() => {
-    if (form.getValues("pickup") !== "Accra(Circle)") {
-      form.setValue("date", "Saturday (26/04/2025)");
-      setDateDisable(true);
-    } else {
-      setDateDisable(false);
-    }
-  }, [form.watch("pickup")]);
+  // useEffect(() => {
+  //   if (form.getValues("pickup") !== "Accra(Circle)") {
+  //     form.setValue("date", "Saturday (26/04/2025)");
+  //     setDateDisable(true);
+  //   } else {
+  //     setDateDisable(false);
+  //   }
+  // }, [form.watch("pickup")]);
 
   function onSubmit(values: homeFormParams) {
     console.log(values);
@@ -88,9 +88,9 @@ const HomeForm = () => {
                   <Dropdown
                     onChangeHandler={field.onChange}
                     value={field.value}
-                    items={[ "Saturday (26/04/2025)", "Sunday (27/04/2025)"]}
+                    items={[ "Saturday (24/05/2025)", "Sunday (25/05/2025)"]}
                     placeholder="Select a Date"
-                    disabled={dateDisable}
+                    //disabled={dateDisable}
                   />
                 </FormControl>
                 <FormMessage />

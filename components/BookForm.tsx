@@ -31,9 +31,9 @@ type bookFormProps = {
 };
 
 export default function BookForm({ pickup, date}: bookFormProps) {
-  if(pickup && pickup !== "Accra(Circle)") {
-    date = "Saturday (26/04/2025)";
-  }
+  // if(pickup && pickup !== "Accra(Circle)") {
+  //   date = "Saturday (26/04/2025)";
+  // }
 
   const [price, setPrice] = useState<number>(0);
   // const [dateDisable, setDateDisable] = useState<boolean>(false);
@@ -42,7 +42,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
   const [otherLocation, setOtherLocation] = useState<string>("");
   const initialVals = {
     pickup: pickup ? pickup : "Accra",
-    date: date ? date : "Saturday (26/04/2025)",
+    date: date ? date : "Saturday (24/05/2025)",
     fullName: "",
     email: "",
     phone: "",
@@ -255,7 +255,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
                     <Dropdown
                       onChangeHandler={field.onChange}
                       value={field.value}
-                      items={["Saturday (26/04/2025)", "Sunday (27/04/2025)"]}
+                      items={["Saturday (24/05/2025)", "Sunday (25/05/2025)"]}
                       placeholder="Date"
                       disabled={isSubmitting} // Disable during submission
                     />
@@ -374,7 +374,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
               render={() => (
                 <FormItem className="mt-[15px]">
                   <div className="mb-4">
-                    <FormLabel className="text-base">Luggage</FormLabel>
+                    <FormLabel className="text-base font-medium">Luggage</FormLabel>
                     <FormDescription className="mt-1">
                       Which of these do you have in addition to as luggage?<br/> (Leave empty if none)
                     </FormDescription>
@@ -418,7 +418,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
             />
 
             <p className="mt-[15px] text-xs text-gray-500 bold">
-              Price to pay: GHS {price !== null ? price * selectedSeats.length : 0}.00
+              Amount to pay: GHS {price !== null ? price * selectedSeats.length : 0}.00
             </p>
             <button
               type="submit"

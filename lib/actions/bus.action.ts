@@ -27,7 +27,7 @@ try {
     } else {
         const numberOfBuses = (await Bus.find({pickup:pickup, date:date})).length;
         const terminalCode = (pickup==="Tema")? "TM":"AC";
-        const day = (date==="Saturday (26/04/2025)")? "SAT": "SUN";
+        const day = (date==="Saturday (24/05/2025)")? "SAT": "SUN";
         const newbusId = generateBusId(terminalCode, numberOfBuses + 1, day);
         const { availableSeats, takenSeats, _id, price, busId} = await Bus.create({pickup: pickup, date: date, 
             price: (pickup === "Accra")? 158: 173, busId:newbusId });
@@ -46,6 +46,10 @@ try {
 export const updateSeats = async ({ busId, seatsToBook }: { busId: string, seatsToBook: string[] }) => {
     try {
         await dbConnect();
+        const {takenSeats, availableSeats} = await Bus.findOne({busId:busId}, {takenSeats: true, availableSeats: true});
+        if(takenSeats.includes(seatsToBook)) {
+            seatsToBook = availableSeats.slice(0, (seatsToBook.length+1));
+        }
 
         // Find and update the bus by busId
         const updatedBus = await Bus.findOneAndUpdate(
