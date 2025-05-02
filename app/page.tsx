@@ -19,7 +19,7 @@ export default function Home() {
             <h1 className="bold h2">Your journey starts here.</h1>
             <p className="w-3/4 text-neutral-300 heroText">
               Book a ride, experience comfort on wheels. We take you to and from
-              KNUST safely.
+              KNUST(Main Campus) safely.
             </p>
             <HomeForm />
           </div>

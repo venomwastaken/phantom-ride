@@ -36,18 +36,19 @@ export default function BookForm({ pickup, date}: bookFormProps) {
   }
 
   const [price, setPrice] = useState<number>(0);
-  const [dateDisable, setDateDisable] = useState<boolean>(false);
+  // const [dateDisable, setDateDisable] = useState<boolean>(false);
+  const [isOther, setIsOther] = useState<boolean>(false);
+  const [list, setList] = useState<string[]>([]);
+  const [otherLocation, setOtherLocation] = useState<string>("");
   const initialVals = {
-    pickup: pickup ? pickup : "Accra(Circle)",
-    destination: "KNUST(Main Campus)",
+    pickup: pickup ? pickup : "Accra",
     date: date ? date : "Saturday (26/04/2025)",
     fullName: "",
     email: "",
     phone: "",
     seats: "",
     agent: "",
-    emergencyContactName: "",
-    emergencyContactPhone: "",
+    emergencyContactInfo: "",
     luggage: [],
   };
 
@@ -82,6 +83,10 @@ export default function BookForm({ pickup, date}: bookFormProps) {
     },
   ] as const;
 
+  const accraPickups = ["Achimota mall", "Accra mall", "Amasaman", "Pokuase", "Ofankor Barrier", 
+                        "Madina(Shell)", "Okponglo Bus Stop", "Shiashie Bus Stop", "Other"];
+  const temaPickups = ["Community 1 Station", "Ashaiman Overhead", "Other"];
+
   const router= useRouter()
 
 
@@ -93,10 +98,17 @@ export default function BookForm({ pickup, date}: bookFormProps) {
           pickup: form.getValues("pickup"),
           date: form.getValues("date"),
         });
-        if(form.getValues("pickup") !== "Accra(Circle)") {
-          form.setValue("date", "Saturday (26/04/2025)");
-          setDateDisable(true);
-        }else {setDateDisable(false);}
+        if(form.getValues("pickup") === "Accra") {
+          form.setValue("location", "");
+          setList(accraPickups);
+          
+          // form.setValue("date", "Saturday (26/04/2025)");
+          // setDateDisable(true);
+         }else {
+          form.setValue("location", "");
+          setList(temaPickups);
+          /*setDateDisable(false);*/
+        }
         setSelectedSeats([]);
         setTakenSeats(bus?.takenSeats || []);
         setPrice(bus?.price || 0);
@@ -117,9 +129,16 @@ export default function BookForm({ pickup, date}: bookFormProps) {
     form.setValue("seats", selectedSeats.join(", "));
   }, [selectedSeats]);
 
+  useEffect(() => {
+    if(form.getValues("location") === "Other"){
+      setIsOther(true)
+    }else{setIsOther(false)}
+  }, [form.watch("location")]);
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true); // Start submitting
+    values.location = (isOther)? `Other: ${otherLocation}`: values.location
     try {
       // Initialize the transaction with Paystack
       const result = await initializeTransaction(
@@ -182,16 +201,16 @@ export default function BookForm({ pickup, date}: bookFormProps) {
           >
             <FormField
               control={form.control}
-              name="destination"
+              name="pickup"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      className={`${styles.whitebgInput} input`}
-                      placeholder="Destination"
-                      {...field}
+                    <Dropdown
+                      onChangeHandler={field.onChange}
                       value={field.value}
-                      readOnly
+                      items={["Accra", "Tema"]}
+                      placeholder="Pickup"
+                      disabled={isSubmitting} // Disable during submission
                     />
                   </FormControl>
                   <FormMessage />
@@ -200,22 +219,33 @@ export default function BookForm({ pickup, date}: bookFormProps) {
             />
             <FormField
               control={form.control}
-              name="pickup"
+              name="location"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Dropdown
                       onChangeHandler={field.onChange}
                       value={field.value}
-                      items={["Accra(Circle)", "Tema(Community 1)", "Adenta(Adenta KFC)"]}
-                      placeholder="Drop Off Location"
+                      items={list}
+                      placeholder="Pickup Point"
                       disabled={isSubmitting} // Disable during submission
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
-              )}
+              )} 
             />
+
+            {isOther && (
+            <Input
+            className={`${styles.whitebgInput} input`}
+              placeholder="Please specify"
+              value={otherLocation}
+              disabled={isSubmitting}
+              onChange={(e) => setOtherLocation(e.target.value)}
+            />
+            )}
+
             <FormField
               control={form.control}
               name="date"
@@ -227,7 +257,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
                       value={field.value}
                       items={["Saturday (26/04/2025)", "Sunday (27/04/2025)"]}
                       placeholder="Date"
-                      disabled={isSubmitting || dateDisable} // Disable during submission
+                      disabled={isSubmitting} // Disable during submission
                     />
                   </FormControl>
                   <FormMessage />
@@ -322,30 +352,13 @@ export default function BookForm({ pickup, date}: bookFormProps) {
             />
             <FormField
               control={form.control}
-              name="emergencyContactName"
+              name="emergencyContactInfo"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
                       className={`${styles.whitebgInput} input`}
-                      placeholder="Emergency Contact Name"
-                      {...field}
-                      disabled={isSubmitting} // Disable during submission
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="emergencyContactPhone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className={`${styles.whitebgInput} input`}
-                      placeholder="Emergency Contact Phone (eg. 054XXXXXXX)"
+                      placeholder="Emergency Contact Info"
                       {...field}
                       disabled={isSubmitting} // Disable during submission
                     />

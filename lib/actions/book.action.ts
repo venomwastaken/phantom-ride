@@ -7,15 +7,15 @@ import { handleError } from "../utils"
 
 type BookingProps = {
     pickup: string,
-    destination: string,
+    location: string,
+    // destination: string,
     date: string,
     fullName: string,
     email: string,
     phone:string,
     seats:string,
     agent: string;
-    emergencyContactName: string;
-    emergencyContactPhone: string;
+    emergencyContactInfo: string;
     luggage: string[];
     reference:string,
     busId : string;

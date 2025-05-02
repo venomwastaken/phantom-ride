@@ -9,15 +9,15 @@ function generateBusId(terminalCode: string, busCount: number, day: string): str
   }
 
 export const getSeats = async ({pickup, date} : {pickup: string, date: string}) => {
-if(date === "Sunday (27/04/2025)"){pickup = "Accra(Circle)";}
+//if(date === "Sunday (27/04/2025)"){pickup = "Accra(Circle)";}
 try {
     await dbConnect();
     
-    if(date === "Sunday (27/04/2025)" && pickup === "Accra(Circle)") {
-        const bus = await Bus.findOne({ pickup: pickup, date: date}, { availableSeats: true, takenSeats: true, _id: true, price: true, busId:true });
-        const { availableSeats, takenSeats, _id, price, busId } = bus;
-        return { availableSeats, takenSeats, _id: _id.toString(), price, busId };
-    }
+    // if(date === "Sunday (27/04/2025)" && pickup === "Accra(Circle)") {
+    //     const bus = await Bus.findOne({ pickup: pickup, date: date}, { availableSeats: true, takenSeats: true, _id: true, price: true, busId:true });
+    //     const { availableSeats, takenSeats, _id, price, busId } = bus;
+    //     return { availableSeats, takenSeats, _id: _id.toString(), price, busId };
+    // }
 
     const bus = await Bus.findOne({ pickup: pickup, date: date, isFull: false}, { availableSeats: true, takenSeats: true, _id: true, price: true, busId:true });
     if (bus) {
@@ -25,12 +25,12 @@ try {
         return { availableSeats, takenSeats, _id: _id.toString(), price, busId };
       
     } else {
-        const numberOfBuses = (await Bus.find({pickup:pickup, date:date})).length
-        const terminalCode = (pickup==="Tema(Community 1)")? "TM":(pickup==="Accra(Circle)")? "AC": "AD"
-        const day = (date==="Saturday (26/04/2025)")? "SAT": "SUN"
-        const newbusId = generateBusId(terminalCode, numberOfBuses + 1, day)
+        const numberOfBuses = (await Bus.find({pickup:pickup, date:date})).length;
+        const terminalCode = (pickup==="Tema")? "TM":"AC";
+        const day = (date==="Saturday (26/04/2025)")? "SAT": "SUN";
+        const newbusId = generateBusId(terminalCode, numberOfBuses + 1, day);
         const { availableSeats, takenSeats, _id, price, busId} = await Bus.create({pickup: pickup, date: date, 
-            price: (pickup === "Accra(Circle)")? 158: 173, busId:newbusId });
+            price: (pickup === "Accra")? 158: 173, busId:newbusId });
         return { availableSeats, takenSeats, _id: _id.toString(), price, busId};
     }
     
@@ -49,7 +49,7 @@ export const updateSeats = async ({ busId, seatsToBook }: { busId: string, seats
 
         // Find and update the bus by busId
         const updatedBus = await Bus.findOneAndUpdate(
-            { busId }, // or use _id if busId is not a unique field
+            { busId }, 
             {
                 $push: { takenSeats: { $each: seatsToBook } }, // Adds to takenSeats
                 $pull: { availableSeats: { $in: seatsToBook } } // Removes from availableSeats
@@ -66,7 +66,7 @@ export const updateSeats = async ({ busId, seatsToBook }: { busId: string, seats
             await Bus.findOneAndUpdate({ busId: updatedBus.busId }, { isFull: true });
         }
 
-        console.log('Seats updated:', updatedBus);
+        //console.log('Seats updated:', updatedBus);
 
     } catch (error) {
         console.error('Error updating bus:', error);

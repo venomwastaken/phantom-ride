@@ -19,8 +19,8 @@ type DropdowmProps = {
 const Dropdown = ({ value, onChangeHandler, items, placeholder, disabled}: DropdowmProps) => {
   return (
     <Select onValueChange={onChangeHandler} value={value}>
-      <SelectTrigger className={`${styles.select} input dropdown` } disabled={disabled}>
-        <SelectValue placeholder={placeholder} />
+      <SelectTrigger className={`${styles.select} input dropdown`} disabled={disabled}>
+        <SelectValue placeholder={placeholder}/>
       </SelectTrigger>
       <SelectContent>
         {items.map(item => (<SelectItem value={item} key={item}>{item}</SelectItem>))}

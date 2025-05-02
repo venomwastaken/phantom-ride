@@ -5,15 +5,14 @@ export interface IBooking extends Document {
     _id: string,
     busId : string;
     pickup: string;
-    destination: string;
+    location: string;
     date: string;
     fullName: string;
     email: string;
     phone: string;
     seats: string;
     agent: string;
-    emergencyContactName: string;
-    emergencyContactPhone: string;
+    emergencyContactInfo: string;
     bookingDate: Date;
     reference: string;
     tickets: string;
@@ -23,15 +22,14 @@ export interface IBooking extends Document {
 const BookingSchema: Schema = new Schema({
   busId : {type:String, required:true},
   pickup: {type: String, required: true},
-  destination: {type: String, required: true},
+  location: {type: String, required: true},
   date: {type: String, required: true},
   fullName: { type: String, required: true },
   email: {type: String, required: true},
   phone: {type: String, required: true},
   seats: {type: String, required: true},
   agent: {type: String, default: 'Daniel'},
-  emergencyContactName: {type: String, required: true},
-  emergencyContactPhone: {type: String, required: true},
+  emergencyContactInfo: {type: String, required: true},
   luggage: {type: String},
   bookingDate: {type: Date, default: Date.now},
   reference: {type:String, required: true},  // This should match Paystack's reference

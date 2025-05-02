@@ -69,11 +69,10 @@ const HomeForm = () => {
                     onChangeHandler={field.onChange}
                     value={field.value}
                     items={[
-                      "Accra(Circle)",
-                      "Tema(Community 1)",
-                      "Adenta(Adenta KFC)",
+                      "Accra",
+                      "Tema",
                     ]}
-                    placeholder="Select Drop off Location"
+                    placeholder="Pickup Location"
                   />
                 </FormControl>
                 <FormMessage />
