@@ -14,7 +14,10 @@ async function sendSms(recipients : RecipientData) {
   try {
     const data = {
       sender: 'PHANTOMRIDE',
-      message: `We are delighted to confirm your booking with Phantom Ride! Please note that you must present your ticket code(s) [<%tickets%>] on the day of departure. We are confident that you will have a smooth ride, and we look forward to having you on board. Thank you for choosing Phantom Ride.`,
+      message: `We are delighted to confirm your booking with Phantom Ride! 
+                Please note that you must present your ticket code(s) [<%tickets%>] on the day of departure. 
+                We are confident that you will have a smooth ride, and we look forward to having you on board. 
+                Thank you for choosing Phantom Ride.`,
       recipients: recipients,
     };
 
@@ -49,18 +52,28 @@ type EmailPayload = {
 
 async function sendEmail({ to, name, tickets}: EmailPayload) {
   try {
+    // const transporter = nodemailer.createTransport({
+    //   service: 'gmail',
+    //   auth: {
+    //     user: process.env.EMAIL_USER, 
+    //     pass: process.env.EMAIL_PASS, 
+    //   },
+    // });
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.zoho.com',
+      port: 465,
+      secure: true,
       auth: {
-        user: process.env.EMAIL_USER, 
-        pass: process.env.EMAIL_PASS, 
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
+    
 
     const mailOptions = {
       from: `"Phantom Ride" <${process.env.EMAIL_USER}>`, 
       to : to,
-      subject : "Booking Confirmed!!!", 
+      subject : "Your Phantom Ride Booking Confirmation", 
       text : `Hey ${name}, We are delighted to confirm your booking with Phantom Ride! 
               Please note that you must present your ticket code(s) [${tickets}] on the day of departure. 
               We are confident that you will have a smooth ride and look forward to having you on board. 
@@ -113,7 +126,7 @@ async function sendEmail({ to, name, tickets}: EmailPayload) {
                             <p>We are delighted to confirm your booking with Phantom Ride! Please note that you must present your ticket code 
                             <span class="ticket-code(s)">[${tickets}]</span> on the day of departure.</p>
                             <p>We are confident that you will have a smooth ride and look forward to having you on board. Thank you for choosing Phantom Ride.</p>
-                            <p class="footer">© 2024 Phantom Ride. All rights reserved.</p>
+                            <p class="footer">© 2025 Phantom Ride. All rights reserved.</p>
                         </div>
                     </body>
                     </html>

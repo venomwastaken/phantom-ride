@@ -47,7 +47,7 @@ export const updateSeats = async ({ busId, seatsToBook }: { busId: string, seats
     try {
         await dbConnect();
         const {takenSeats, availableSeats} = await Bus.findOne({busId:busId}, {takenSeats: true, availableSeats: true});
-        if(takenSeats.includes(seatsToBook)) {
+        if(takenSeats.includes(seatsToBook) && (availableSeats.length >= seatsToBook)) {
             seatsToBook = availableSeats.slice(0, (seatsToBook.length+1));
         }
 

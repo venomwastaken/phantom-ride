@@ -1,7 +1,6 @@
 import HomeForm from "@/components/HomeForm";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
-import Notice from "@/components/shared/Notice";
 import SubToMail from "@/components/SubToMail";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,8 +9,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <>
-      <Notice/>    
+    <>  
       <Navbar color="black" />
       <section className="hero-section">
         <div className="hero-content wrapper">

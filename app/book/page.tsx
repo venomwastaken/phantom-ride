@@ -7,7 +7,6 @@ import BookForm from "@/components/BookForm";
 import styles from "./bs.module.css";
 import { useSearchParams } from "next/navigation";
 import BusWrapper from "@/components/BusContext";
-import Notice from "@/components/shared/Notice";
 
 export default function Book() {
   const searchParams = useSearchParams();
@@ -17,7 +16,6 @@ export default function Book() {
 
   return (
     <BusWrapper>
-      <Notice/>
       <Navbar />
         <div className={`${styles.bookingContainer} wrapper`}>
           <div><BusLayout/></div>
