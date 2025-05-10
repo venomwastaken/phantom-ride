@@ -83,8 +83,8 @@ export default function BookForm({ pickup, date}: bookFormProps) {
     },
   ] as const;
 
-  const accraPickups = ["Achimota mall", "Accra mall", "Amasaman", "Pokuase", "Ofankor Barrier", 
-                        "Madina(Shell)", "Okponglo Bus Stop", "Shiashie Bus Stop", "Other"];
+  const accraPickups = ["Achimota mall Bus Stop", "Accra mall Bus Stop", "Amasaman", "Pokuase (Frimps Oil Filling Station)", "Ofankor Barrier", 
+                        "Circle (So Fresh Filling Station)", "Taifa Junction Bus Stop", "Nsawam (Total Filling Station)", "Other"];
   const temaPickups = ["Community 1 Station", "Ashaiman Overhead", "Other"];
 
   const router= useRouter()
