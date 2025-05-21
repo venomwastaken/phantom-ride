@@ -14,10 +14,7 @@ async function sendSms(recipients : RecipientData) {
   try {
     const data = {
       sender: 'PHANTOMRIDE',
-      message: `We are delighted to confirm your booking with Phantom Ride! 
-                Please note that you must present your ticket code(s) [<%tickets%>] on the day of departure. 
-                We are confident that you will have a smooth ride, and we look forward to having you on board. 
-                Thank you for choosing Phantom Ride.`,
+      message: `We are delighted to confirm your booking with Phantom Ride! Please note that you must present your ticket code(s) [<%tickets%>] on the day of departure. We are confident that you will have a smooth ride, and we look forward to having you on board. Thank you for choosing Phantom Ride.`,
       recipients: recipients,
     };
 
