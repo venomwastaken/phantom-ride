@@ -19,20 +19,20 @@ try {
     //     return { availableSeats, takenSeats, _id: _id.toString(), price, busId };
     // }
 
-    const bus = await Bus.findOne({ pickup: pickup, date: date, /*isFull: false*/}, { availableSeats: true, takenSeats: true, _id: true, price: true, busId:true });
+    const bus = await Bus.findOne({ pickup: pickup, date: date, isFull: false}, { availableSeats: true, takenSeats: true, _id: true, price: true, busId:true });
     if (bus) {
         const { availableSeats, takenSeats, _id, price, busId } = bus;
         return { availableSeats, takenSeats, _id: _id.toString(), price, busId };
     } 
-    // else {
-    //     const numberOfBuses = (await Bus.find({pickup:pickup, date:date})).length;
-    //     const terminalCode = (pickup==="Tema")? "TM":"AC";
-    //     const day = (date==="Saturday (24/05/2025)")? "SAT": "SUN";
-    //     const newbusId = generateBusId(terminalCode, numberOfBuses + 1, day);
-    //     const { availableSeats, takenSeats, _id, price, busId} = await Bus.create({pickup: pickup, date: date, 
-    //         price: (pickup === "Accra")? 158: 173, busId:newbusId });
-    //     return { availableSeats, takenSeats, _id: _id.toString(), price, busId};
-    // }
+    else {
+        const numberOfBuses = (await Bus.find({pickup:pickup, date:date})).length;
+        const terminalCode = (pickup==="Tema")? "TM":"AC";
+        const day = (date==="Saturday (24/05/2025)")? "SAT": "SUN";
+        const newbusId = generateBusId(terminalCode, numberOfBuses + 1, day);
+        const { availableSeats, takenSeats, _id, price, busId} = await Bus.create({pickup: pickup, date: date, 
+            price: (pickup === "Accra")? 158: 173, busId:newbusId });
+        return { availableSeats, takenSeats, _id: _id.toString(), price, busId};
+    }
     
 } catch (error) {
     handleError(error);
