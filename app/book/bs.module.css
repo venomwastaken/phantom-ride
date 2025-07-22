@@ -21,7 +21,7 @@
 }
 
 .cardForm {
-    width:max-content;
+    
     border: solid #ededed 2px;
     padding: 20px;
     border-radius: 8px;
@@ -37,7 +37,6 @@
     background-color: #ebebeb;
 }
 
-/* bs.module.css */
 
 .seats {
     display: flex;

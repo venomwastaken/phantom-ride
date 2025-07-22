@@ -23,6 +23,8 @@ import { getSeats } from "@/lib/actions/bus.action";
 import { initializeTransaction } from "@/lib/actions/payment.action";
 import { useBusContext } from "./BusContext";
 import { useRouter } from "next/navigation";
+import PayDialog from "./PayDialog";
+import { initializePayment } from "@/lib/actions/paymentPayaza.actions";
 
 
 type bookFormProps = {
@@ -38,7 +40,9 @@ export default function BookForm({ pickup, date}: bookFormProps) {
   const [price, setPrice] = useState<number>(0);
   // const [dateDisable, setDateDisable] = useState<boolean>(false);
   const [isOther, setIsOther] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
   const [list, setList] = useState<string[]>([]);
+  const [data, setData] = useState<object>({})
   const [otherLocation, setOtherLocation] = useState<string>("");
   const initialVals = {
     pickup: pickup ? pickup : "Accra",
@@ -136,49 +140,45 @@ export default function BookForm({ pickup, date}: bookFormProps) {
   }, [form.watch("location")]);
 
 
+  function generateReference() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let ref = "";
+    for(let i=0;i<12;i++) {
+        ref += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return ref;
+}
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true); // Start submitting
     values.location = (isOther)? `Other: ${otherLocation}`: values.location
+    const reference = generateReference();
+
+    // Create the booking on your server before payment
+    const bookingData = {
+      ...values,
+      reference: reference,
+      busId: busId,
+    };
+
     try {
-      // Initialize the transaction with Paystack
-      const result = await initializeTransaction(
-        values.email,
-        price!,
-        selectedSeats
-      );
+      
+      // Send booking data to the server to create a pending booking via the API route
+      const response = await fetch("/api/book", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingData),
+      });
 
-      if (typeof window !== "undefined" && result && result.data) {
-        const { default: PaystackPop } = await import("@paystack/inline-js");
-
-        // Create the booking on your server before payment
-        const bookingData = {
-          ...values,
-          reference: result.data.data.reference,
-          busId: busId,
-        };
-
-        // Send booking data to the server to create a pending booking via the API route
-        const response = await fetch("/api/book", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(bookingData),
-        });
-
-        if (!response.ok) {
-          throw new Error("Booking creation failed");
-        }
-
-        const bookingResponse = await response.json();
-        console.log("Booking Response:", bookingResponse);
-
-        // Open Paystack popup for payment
-        const popup = new PaystackPop();
-        popup.resumeTransaction(result.data.data.access_code);
-      } else {
-        throw new Error("Transaction initialization failed");
+      if (!response.ok) {
+        throw new Error("Booking creation failed");
       }
+
+      const bookingResponse = await response.json();
+      console.log("Booking Response:", bookingResponse);
+
     } catch (error: any) {
       console.error("Error:", error);
     } finally {
@@ -186,14 +186,17 @@ export default function BookForm({ pickup, date}: bookFormProps) {
     }
     form.reset();
     setSelectedSeats([]);
-    router.push("/redirect")
-    console.log(values);
+    //router.push("/redirect")
+    // console.log(values);
+
+    setData(bookingData);
+    setOpen(true);
   }
 
   return (
     <>
       <Form {...form}>
-        <div className={styles.cardForm}>
+        <div className={`${styles.cardForm} w-4/6`}>
           <h2 className="mb-5 bold text-xl">Book a ride</h2>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -416,10 +419,6 @@ export default function BookForm({ pickup, date}: bookFormProps) {
                 </FormItem>
               )}
             />
-
-            <p className="mt-[15px] text-xs text-gray-500 bold">
-              Amount to pay: GHS {price !== null ? price * selectedSeats.length : 0}.00
-            </p>
             <button
               type="submit"
               className={`${
@@ -429,9 +428,13 @@ export default function BookForm({ pickup, date}: bookFormProps) {
             >
               {isSubmitting ? "Submitting..." : "Book Ride"}
             </button>
+            <p className="mt-[15px] text-xs text-gray-500 bold">
+              Amount to pay: GHS {price !== null ? price * selectedSeats.length : 0}.00
+            </p>
           </form>
         </div>
       </Form>
+      <PayDialog open={open} onOpenChange={setOpen} data={data} price={price}/>
     </>
   );
 }

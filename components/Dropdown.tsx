@@ -6,7 +6,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import styles from "@/app/book/bs.module.css"
+import styles from "@/app/book/bs.module.css";
+import { cn } from "@/lib/utils";
 
 type DropdowmProps = {
   placeholder: string;
@@ -14,16 +15,31 @@ type DropdowmProps = {
   onChangeHandler?: () => void;
   items: string[];
   disabled?: boolean;
+  className?: string;
 };
 
-const Dropdown = ({ value, onChangeHandler, items, placeholder, disabled}: DropdowmProps) => {
+const Dropdown = ({
+  value,
+  onChangeHandler,
+  items,
+  placeholder,
+  disabled,
+  className,
+}: DropdowmProps) => {
   return (
     <Select onValueChange={onChangeHandler} value={value}>
-      <SelectTrigger className={`${styles.select} input dropdown`} disabled={disabled}>
-        <SelectValue placeholder={placeholder}/>
+      <SelectTrigger
+        className={cn(`${styles.select} input dropdown`,className)}
+        disabled={disabled}
+      >
+        <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {items.map(item => (<SelectItem value={item} key={item}>{item}</SelectItem>))}
+        {items.map((item) => (
+          <SelectItem value={item} key={item}>
+            {item}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );

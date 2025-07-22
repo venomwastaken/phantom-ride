@@ -12,6 +12,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -85,7 +86,7 @@ nav {
 }
 
 button:hover, .button:hover {
-  opacity: 80%;
+  opacity: 90%;
 }
 
 .wrapper {
@@ -99,8 +100,8 @@ button:hover, .button:hover {
 input,.input {
   border: 0;
   outline: none;
-  width: 35vw;
-  max-width: 400px;
+  width: 100%;
+  /*max-width: 400px;*/
   padding: 13px 18px;
   border-radius: 8px;
   margin-top: 15px;
@@ -119,6 +120,11 @@ input,.input {
   display: grid;
   grid-template-columns: 50% 50%;
   gap: 50px;
+}
+
+.dailog {
+  margin: 0;
+  outline: 1px solid #737373;
 }
 
 @media (max-width: 1024px) {

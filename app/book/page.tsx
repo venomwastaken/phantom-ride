@@ -19,10 +19,12 @@ export default function Book() {
       <Navbar />
         <div className={`${styles.bookingContainer} wrapper`}>
           <div><BusLayout/></div>
-          <BookForm
+          <div className="">
+            <BookForm
             pickup={pickup}
             date={date}
           />
+          </div>
         </div>
     </BusWrapper>
   );
