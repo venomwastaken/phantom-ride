@@ -101,11 +101,14 @@ input,.input {
   border: 0;
   outline: none;
   width: 100%;
-  /*max-width: 400px;*/
   padding: 13px 18px;
   border-radius: 8px;
   margin-top: 15px;
   color: rgb(60, 60, 60);
+}
+
+.input::placeholder {
+  color: #737373;
 }
 
 .hero-content {
@@ -146,6 +149,7 @@ input,.input {
   input, .input {
     width: 100%;
     max-width:70%;
+    font-size: 14px;
   }
 
   .dropdown{

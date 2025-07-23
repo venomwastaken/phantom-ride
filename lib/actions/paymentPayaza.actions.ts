@@ -13,7 +13,22 @@ type Data = {
 
 export async function initializePayment({price, phoneNumber, networkBankCode, email, firstName, lastName, selectedSeats, reference} : Data) {
     const amount = (price * selectedSeats.split(", ").length);
-    console.log("Initializing payment with amount:", amount, "and reference:", reference);
+    //console.log("Initializing payment with amount:", amount, "and reference:", reference);
+    //sample request body:
+    console.log({
+        "amount": amount,
+        "customer_number": `233${phoneNumber.substring(1)}`,
+        "transaction_reference": reference,
+        "transaction_description": "Phantom Ride",
+        "customer_bank_code": networkBankCode,
+        "currency_code": "GHS",
+        "customer_email": email,
+        "customer_first_name": firstName,
+        "customer_last_name": lastName,
+        "customer_phone_number": phoneNumber,
+        "country_code": "GH"
+        })
+
     const publicKey = process.env.PAYAZA_PUBLIC_KEY
 
 
