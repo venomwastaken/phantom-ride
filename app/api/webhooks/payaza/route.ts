@@ -59,26 +59,30 @@ import { sendNotification } from '@/lib/actions/notification.actions';
 
 export async function POST(req: Request) {
   try {
-    const rawBody = await req.text();
+    const rawBody = await req.text(); // raw string from Payaza
     const signature = req.headers.get('x-payaza-signature') || '';
-    const secretKey = process.env.PAYAZA_SECRET_KEY!;
+    const secretKey = process.env.PAYAZA_SECRET_KEY!; // must be secret, not public key
 
-    const expectedSignature = crypto
+    // Generate our own HMAC SHA-512 Base64 signature
+    const computedSignature = crypto
       .createHmac('sha512', secretKey)
-      .update(rawBody)
-      .digest('base64'); // or 'hex', depending on Payaza
+      .update(rawBody, 'utf8')
+      .digest('base64');
 
-    if (signature !== expectedSignature) {
-      console.error('Invalid signature:', signature, expectedSignature);
+    // Compare against what Payaza sent
+    if (computedSignature !== signature) {
+      console.error('Invalid signature');
+      console.error('Provided:', signature);
+      console.error('Computed:', computedSignature);
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
+    // Parse body only after verifying
     const body = JSON.parse(rawBody);
 
     if (body.status === 'Completed') {
       const { reference, busId, seats, fullName, email, phone, tickets } =
         await findBooking(body.transaction_reference);
-
       const name = fullName.split(' ')[0];
 
       await updateSeats({ busId, seatsToBook: seats.split(', ') });
@@ -102,3 +106,4 @@ export async function POST(req: Request) {
 export function GET() {
   return new Response(`Method Not Allowed`, { status: 405, headers: { Allow: 'POST' } });
 }
+
