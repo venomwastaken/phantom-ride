@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
     if (secret === req.headers.get('authorization')) {
       // Process the event here
-      if(body.status ==="complete"){
+      if(body.status === "Completed"){
         const { reference, busId, seats, fullName, email, phone, tickets} = await findBooking(body.transaction_reference)
         const name = fullName.split(' ')[0]
 
