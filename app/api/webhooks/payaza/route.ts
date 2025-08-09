@@ -59,6 +59,8 @@ const secretKey: string = process.env.PAYAZA_SECRET_KEY!;
 export async function POST(request: Request) {
   try {
     const requestBody: string = await request.text();
+    console.log('Request Body:', requestBody);
+
     const predefinedSignature: string | null = request.headers.get('x-payaza-signature');
 
     // Generate computed signature
