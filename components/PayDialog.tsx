@@ -18,8 +18,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { initializePayment } from '@/lib/actions/paymentPayaza.actions'
-import { useRouter } from "next/navigation";
+
 
 
 export function PayDialog ({paymentForm, onSubmit, price, data, handleBack}: 
@@ -77,7 +76,7 @@ export function PayDialog ({paymentForm, onSubmit, price, data, handleBack}:
                   <Dropdown
                     onChangeHandler={field.onChange}
                     value={field.value}
-                    items={["MTN", "Vodafone", "AirtelTigo"]}
+                    items={["MTN", "Telecel Gh", "AirtelTigo"]}
                     placeholder="Select a network"
                   />
                 </FormControl>
