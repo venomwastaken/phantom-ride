@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   try {
     // Read the request body as a JSON object
     const body = await req.json();
-    
+    console.log(req.headers)
 
     if (secret === req.headers.get('authorization')) {
       console.log(body);
