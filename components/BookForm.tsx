@@ -20,8 +20,6 @@ import { useEffect, useRef, useState } from "react";
 import { useBusContext } from "./BusContext";
 import { useRouter } from "next/navigation";
 
-
-
 type bookFormProps = {
   pickup?: string;
   date?: string;
@@ -30,7 +28,13 @@ type bookFormProps = {
   form: ReturnType<typeof useForm<z.infer<typeof formSchema>>>;
 };
 
-export default function BookForm({ pickup, date, onSubmit, handleBack, form}: bookFormProps) {
+export default function BookForm({
+  pickup,
+  date,
+  onSubmit,
+  handleBack,
+  form,
+}: bookFormProps) {
   // if(pickup && pickup !== "Accra(Circle)") {
   //   date = "Saturday (26/04/2025)";
   // }
@@ -40,13 +44,10 @@ export default function BookForm({ pickup, date, onSubmit, handleBack, form}: bo
   const [isOther, setIsOther] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [list, setList] = useState<string[]>([]);
-  const [data, setData] = useState<object>({})
+  const [data, setData] = useState<object>({});
   const [otherLocation, setOtherLocation] = useState<string>("");
 
-
-  const {
-    isSubmitting,
-  } = useBusContext();
+  const { isSubmitting } = useBusContext();
 
   const luggageList = [
     {
@@ -63,9 +64,20 @@ export default function BookForm({ pickup, date, onSubmit, handleBack, form}: bo
     },
   ] as const;
 
-  const accraPickups = ["Achimota mall Bus Stop", "Accra mall Bus Stop", "Amasaman", "Pokuase (Frimps Oil Filling Station)", "Ofankor Barrier", 
-                        "Circle (So Fresh Filling Station)", "Taifa Junction Bus Stop", "Nsawam (Total Filling Station)", "Other"];
+  const accraPickups = [
+    "Achimota mall Bus Stop",
+    "Accra mall Bus Stop",
+    "Amasaman",
+    "Pokuase (Frimps Oil Filling Station)",
+    "Ofankor Barrier",
+    "Circle (So Fresh Filling Station)",
+    "Taifa Junction Bus Stop",
+    "Nsawam (Total Filling Station)",
+    "Other",
+  ];
   const temaPickups = ["Community 1 Station", "Ashaiman Overhead", "Other"];
+  const adentaPickups = ["Adenta","Other"]
+  const capeCoastPickups = ["Cape Coast", "Takoradi", "Other"];
 
   const prevPickupRef = useRef<string | undefined>(form.getValues("pickup"));
 
@@ -77,18 +89,23 @@ export default function BookForm({ pickup, date, onSubmit, handleBack, form}: bo
     }
     if (currentPickup === "Accra") {
       setList(accraPickups);
-    } else {
+    } else if (currentPickup === "Tema") {
       setList(temaPickups);
+    }else if (currentPickup === "Adenta") {
+      setList(adentaPickups);
+    } else if (currentPickup === "Cape Coast/Takoradi") {
+      setList(capeCoastPickups);
     }
-    }, [form.watch("date"), form.watch("pickup")]);
 
+  }, [form.watch("date"), form.watch("pickup")]);
 
   useEffect(() => {
-    if(form.getValues("location") === "Other"){
-      setIsOther(true)
-    }else{setIsOther(false)}
+    if (form.getValues("location") === "Other") {
+      setIsOther(true);
+    } else {
+      setIsOther(false);
+    }
   }, [form.watch("location")]);
-
 
   return (
     <>
@@ -108,7 +125,7 @@ export default function BookForm({ pickup, date, onSubmit, handleBack, form}: bo
                     <Dropdown
                       onChangeHandler={field.onChange}
                       value={field.value}
-                      items={["Accra", "Tema"]}
+                      items={["Accra", "Tema", "Adenta", "Cape Coast/Takoradi"]}
                       placeholder="Pickup"
                       disabled={isSubmitting} // Disable during submission
                     />
@@ -133,17 +150,17 @@ export default function BookForm({ pickup, date, onSubmit, handleBack, form}: bo
                   </FormControl>
                   <FormMessage />
                 </FormItem>
-              )} 
+              )}
             />
 
             {isOther && (
-            <Input
-            className={`${styles.whitebgInput} input`}
-              placeholder="Please specify"
-              value={otherLocation}
-              disabled={isSubmitting}
-              onChange={(e) => setOtherLocation(e.target.value)}
-            />
+              <Input
+                className={`${styles.whitebgInput} input`}
+                placeholder="Please specify"
+                value={otherLocation}
+                disabled={isSubmitting}
+                onChange={(e) => setOtherLocation(e.target.value)}
+              />
             )}
 
             <FormField
@@ -225,7 +242,16 @@ export default function BookForm({ pickup, date, onSubmit, handleBack, form}: bo
                     <Dropdown
                       onChangeHandler={field.onChange}
                       value={field.value}
-                      items={["Daniel", "Thelma", "Derrick", "Rodolphe", "Desmond", "Palba", "Nana Banyin"]}
+                      items={[
+                        "Daniel",
+                        "Thelma",
+                        "Derrick",
+                        "Rodolphe",
+                        "Desmond",
+                        "Palba",
+                        "Nana Banyin",
+                        "Zerubabel",
+                      ]}
                       placeholder="Agent"
                       disabled={isSubmitting} // Disable during submission
                     />
@@ -258,9 +284,12 @@ export default function BookForm({ pickup, date, onSubmit, handleBack, form}: bo
               render={() => (
                 <FormItem className="mt-[15px]">
                   <div className="mb-4">
-                    <FormLabel className="text-base font-medium">Luggage</FormLabel>
+                    <FormLabel className="text-base font-medium">
+                      Luggage
+                    </FormLabel>
                     <FormDescription className="mt-1">
-                      Which of these do you have in addition to as luggage?<br/> (Leave empty if none)
+                      Which of these do you have in addition to as luggage?
+                      <br /> (Leave empty if none)
                     </FormDescription>
                   </div>
                   {luggageList.map((item) => (
@@ -275,7 +304,7 @@ export default function BookForm({ pickup, date, onSubmit, handleBack, form}: bo
                             className="flex flex-row items-start space-x-3 space-y-0"
                           >
                             <FormControl>
-                              <Checkbox 
+                              <Checkbox
                                 checked={field.value?.includes(item.id)}
                                 onCheckedChange={(checked) => {
                                   return checked
@@ -300,7 +329,7 @@ export default function BookForm({ pickup, date, onSubmit, handleBack, form}: bo
                 </FormItem>
               )}
             />
-            
+
             <div className="flex justify-between mt-[35px]">
               <button
                 type="button"
@@ -323,8 +352,6 @@ export default function BookForm({ pickup, date, onSubmit, handleBack, form}: bo
                 {/*isSubmitting ? "Submitting..." : "Book Ride"*/}Next
               </button>
             </div>
-            
-        
           </form>
         </div>
       </Form>

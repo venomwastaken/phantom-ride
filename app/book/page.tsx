@@ -1,5 +1,4 @@
-'use client'
-
+"use client";
 
 import Navbar from "@/components/shared/Navbar";
 import BusLayout from "@/components/BusLayout";
@@ -14,8 +13,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PayDialog from "@/components/PayDialog";
 import { initializePayment } from "@/lib/actions/paymentPayaza.actions";
-
-
 
 export default function Book() {
   const {
@@ -44,12 +41,11 @@ export default function Book() {
     emergencyContactInfo: "",
     luggage: [],
   };
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialVals,
   });
-
 
   const paymentForm = useForm<z.infer<typeof paymentFormSchema>>({
     resolver: zodResolver(paymentFormSchema),
@@ -57,7 +53,7 @@ export default function Book() {
       phoneNumber: "",
       network: "",
     },
-  })
+  });
 
   const [step, setStep] = useState<number>(0);
   const totalSteps = 3;
@@ -92,7 +88,7 @@ export default function Book() {
     emergencyContactInfo: "",
     luggage: [],
     reference: "",
-  })
+  });
   const [isOther, setIsOther] = useState<boolean>(false);
   const [otherLocation, setOtherLocation] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
@@ -100,20 +96,20 @@ export default function Book() {
   function generateReference() {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let ref = "";
-    for(let i=0;i<12;i++) {
-        ref += chars.charAt(Math.floor(Math.random() * chars.length));
+    for (let i = 0; i < 12; i++) {
+      ref += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return ref;
   }
 
-  const fetchSeats = async (pickup:string, date:string) => {
+  const fetchSeats = async (pickup: string, date: string) => {
     setIsLoadingSeats(true); // Start loading
     try {
       const bus = await getSeats({
         pickup: pickup,
-        date:date,
+        date: date,
       });
-      
+
       setTakenSeats(bus?.takenSeats || []);
       setPrice(bus?.price || 0);
       setBusId(bus?.busId);
@@ -126,54 +122,58 @@ export default function Book() {
 
   const handleBack = () => {
     if (step > 0) {
-      setStep(step - 1)
+      setStep(step - 1);
     }
-  }
+  };
 
-  const onSubmit = async (values: BookingData /*z.infer<typeof formSchema>*/) => {
-    values.location = (isOther)? `Other: ${otherLocation}`: values.location
+  const onSubmit = async (
+    values: BookingData /*z.infer<typeof formSchema>*/
+  ) => {
+    values.location = isOther ? `Other: ${otherLocation}` : values.location;
     const reference = generateReference();
 
     if (step === 0) {
-      setStep(step + 1)
+      setStep(step + 1);
       setData({
         ...values,
         reference: reference,
       });
 
       await fetchSeats(values.pickup ?? "", values.date ?? "");
-
-    } else if(step === 1){
-        setStep(step + 1)
-        setData({
-          ...data,
-          busId: busId,
-          seats: selectedSeats.toString(),
-        });
+    } else if (step === 1) {
+      setStep(step + 1);
+      setData({
+        ...data,
+        busId: busId,
+        seats: selectedSeats.toString(),
+      });
     } else {
+      setData({
+        ...data,
+        busId: busId,
+        seats: selectedSeats.toString(),
+        phoneNumber: values.phoneNumber,
+        network: values.network,
+      });
 
-        setData({
-          ...data,
-          busId: busId,
-          seats: selectedSeats.toString(),
-          phoneNumber: values.phoneNumber,
-          network: values.network,
-        });
-
-        console.log("Final Data:", data);
+      console.log("Final Data:", data);
 
       try {
-
         initializePayment({
           price: price,
           phoneNumber: values.phoneNumber ?? "",
-          networkBankCode: (values.network==="MTN")?"MTN":(values.network==="Telecel Gh")?"VOD":"AIR",
+          networkBankCode:
+            values.network === "MTN"
+              ? "MTN"
+              : values.network === "Telecel Gh"
+              ? "VOD"
+              : "AIR",
           email: data.email ?? "",
           firstName: (data.fullName ?? "").split(" ")[0],
           lastName: (data.fullName ?? "").split(" ").slice(-1)[0],
           selectedSeats: data.seats ?? "",
           reference: data.reference ?? "",
-        })
+        });
 
         // Send booking data to the server to create a pending booking via the API route
         const response = await fetch("/api/book", {
@@ -190,37 +190,55 @@ export default function Book() {
 
         const bookingResponse = await response.json();
         console.log("Booking Response:", bookingResponse);
-
-        } catch (error) {
-          console.error("Error:", error);
-        } finally {
-          setIsSubmitting(false);
-          setSelectedSeats([]);
-          setTakenSeats([]);
-          setBusId("");
-          setData({});
-          setStep(0);
-        }
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setIsSubmitting(false);
+        setSelectedSeats([]);
+        setTakenSeats([]);
+        setBusId("");
+        setData({});
+        setStep(0);
+      }
     }
-  }
+  };
 
   return (
     <>
-    
       <Navbar />
 
-        <div className="mx-auto my-0 px-[5vw] py-[5vh] sm:max-w-3xl flex flex-col">
-          {step === 0 && <BookForm pickup={pickup} date={date} onSubmit={onSubmit} handleBack={handleBack} form={form}/>}
-          {step === 1 && <div className="px-auto py-0 w-full">
-                            <BusLayout price={price} handleBack={handleBack} data={data} onSubmit={onSubmit}/>
-                         </div>
-          }
-          {step === 2 && <div className="px-auto py-0 w-full">
-                            <PayDialog paymentForm={paymentForm} onSubmit={onSubmit} data={data} price={price} handleBack={handleBack}/>
-                         </div>
-          }
-        </div>
-
+      <div className="mx-auto my-0 px-[5vw] py-[5vh] sm:max-w-3xl flex flex-col">
+        {step === 0 && (
+          <BookForm
+            pickup={pickup}
+            date={date}
+            onSubmit={onSubmit}
+            handleBack={handleBack}
+            form={form}
+          />
+        )}
+        {step === 1 && (
+          <div className="px-auto py-0 w-full">
+            <BusLayout
+              price={price}
+              handleBack={handleBack}
+              data={data}
+              onSubmit={onSubmit}
+            />
+          </div>
+        )}
+        {step === 2 && (
+          <div className="px-auto py-0 w-full">
+            <PayDialog
+              paymentForm={paymentForm}
+              onSubmit={onSubmit}
+              data={data}
+              price={price}
+              handleBack={handleBack}
+            />
+          </div>
+        )}
+      </div>
     </>
   );
 }

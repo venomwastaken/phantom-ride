@@ -70,7 +70,7 @@ const HomeForm = () => {
                   <Dropdown
                     onChangeHandler={field.onChange}
                     value={field.value}
-                    items={["Accra", "Tema"]}
+                    items={["Accra", "Tema", "Adenta", "Cape Coast/Takoradi"]}
                     placeholder="Drop off Location"
                   />
                 </FormControl>

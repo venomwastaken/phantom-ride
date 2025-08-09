@@ -26,11 +26,11 @@ try {
     } 
     else {
         const numberOfBuses = (await Bus.find({pickup:pickup, date:date})).length;
-        const terminalCode = (pickup==="Tema")? "TM":"AC";
+        const terminalCode = (pickup==="Tema")? "TM":((pickup==="Adenta")? "AD":((pickup==="Cape Coast/Takoradi")? "CT":"AC"));
         const day = (date==="Saturday (24/05/2025)")? "SAT": "SUN";
         const newbusId = generateBusId(terminalCode, numberOfBuses + 1, day);
         const { availableSeats, takenSeats, _id, price, busId} = await Bus.create({pickup: pickup, date: date, 
-            price: (pickup === "Accra")? 158: 173, busId:newbusId });
+            price: (pickup === "Accra")? 1: 1, busId:newbusId });
         return { availableSeats, takenSeats, _id: _id.toString(), price, busId};
     }
     
