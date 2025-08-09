@@ -29,8 +29,11 @@ export async function initializePayment({price, phoneNumber, networkBankCode, em
         "country_code": "GH"
         })
 
-    const publicKey = process.env.PAYAZA_PUBLIC_KEY
-
+    
+    const key = process.env.PAYAZA_PUBLIC_KEY!
+    
+    //convert public key to base64
+    const publicKey = Buffer.from(key).toString('base64');
 
     if (!publicKey) {
         throw new Error('Missing Payaza public key.');
