@@ -54,7 +54,7 @@ import crypto from "crypto";
 import { NextResponse } from "next/server";
 
 
-export default async function handler(req: Request) {
+export async function POST(req: Request) {
 
   try {
     const body = await req.json();
