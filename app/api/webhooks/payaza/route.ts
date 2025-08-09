@@ -50,41 +50,49 @@
 // }
 
 
-import crypto from "crypto";
-import { NextResponse } from "next/server";
+import crypto from 'crypto';
 
+// Define the request body and secret keys as strings
+const secretKey: string = process.env.PAYAZA_SECRET_KEY!;
 
-export async function POST(req: Request) {
-
+// API route handler for webhook verification
+export async function POST(request: Request) {
   try {
-    const body = await req.json();
+    const requestBody: string = await request.text();
+    const predefinedSignature: string | null = request.headers.get('x-payaza-signature');
 
-    const providedSignature = req.headers.get("x-payaza-signature");
+    // Generate computed signature
+    const computedSignature: string = crypto
+          .createHmac('sha512', secretKey)
+          .update(requestBody, 'utf8')
+          .digest('hex');
 
-    const secret = process.env.PAYAZA_SECRET_KEY!;
-    const computedSignature = crypto
-      .createHmac("sha512", secret)
-      .update(body, "utf8")
-      .digest("base64");
 
-    console.log("Provided:", providedSignature);
-    console.log("Computed:", computedSignature);
+    // Compare computed signature with predefined signature
+    if (computedSignature === predefinedSignature) {
+      console.log('Signature matched successfully!');
 
-    if (providedSignature !== computedSignature) {
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+      return new Response(
+        JSON.stringify({ message: ' SIGNATURE MATCHED SUCCESSFULLY!' }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    } else {
+      console.error('Signature mismatch!');
+      console.error('Computed Signature:', computedSignature);
+      console.error('Predefined Signature:', predefinedSignature);
     }
 
-
-    console.log("Webhook verified and received:", body);
-
-    return NextResponse.json({ message: 'Webhook received and processed' }, { status: 200 });
   } catch (error) {
-    console.error('Error processing webhook:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    console.error('Error verifying webhook:', error);
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
-}
-
-export function GET() {
-  // Return a 405 if it's not a POST request
-  return new Response(`Method Not Allowed`, { status: 405, headers: { Allow: 'POST' } });
 }
