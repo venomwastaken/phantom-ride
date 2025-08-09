@@ -50,60 +50,62 @@
 // }
 
 
+import type { NextApiRequest, NextApiResponse } from "next";
+import crypto from "crypto";
 
-import crypto from 'crypto';
-import { NextResponse } from 'next/server';
-import { findBooking, updateBookingStatus } from '@/lib/actions/book.action';
-import { updateSeats } from '@/lib/actions/bus.action';
-import { sendNotification } from '@/lib/actions/notification.actions';
+export const config = {
+  api: {
+    bodyParser: false, //  Required to get the raw body string
+  },
+};
 
-export async function POST(req: Request) {
-  try {
-    const rawBody = await req.text(); // raw string from Payaza
-    const signature = req.headers.get('x-payaza-signature') || '';
-    const secretKey = process.env.PAYAZA_SECRET_KEY!; // must be secret, not public key
-
-    // Generate our own HMAC SHA-512 Base64 signature
-    const computedSignature = crypto
-      .createHmac('sha512', secretKey)
-      .update(rawBody, 'utf8')
-      .digest('base64');
-
-    // Compare against what Payaza sent
-    if (computedSignature !== signature) {
-      console.error('Invalid signature');
-      console.error('Provided:', signature);
-      console.error('Computed:', computedSignature);
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
-    }
-
-    // Parse body only after verifying
-    const body = JSON.parse(rawBody);
-
-    if (body.status === 'Completed') {
-      const { reference, busId, seats, fullName, email, phone, tickets } =
-        await findBooking(body.transaction_reference);
-      const name = fullName.split(' ')[0];
-
-      await updateSeats({ busId, seatsToBook: seats.split(', ') });
-      await updateBookingStatus(reference);
-
-      await sendNotification({
-        name,
-        email,
-        phone: `233${phone.substring(1)}`,
-        tickets,
-      });
-    }
-
-    return NextResponse.json({ message: 'Webhook processed' }, { status: 200 });
-  } catch (error) {
-    console.error('Error processing webhook:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
-}
 
-export function GET() {
-  return new Response(`Method Not Allowed`, { status: 405, headers: { Allow: 'POST' } });
+  try {
+    //  Read raw request body
+    const chunks: Uint8Array[] = [];
+    for await (const chunk of req) {
+      chunks.push(chunk);
+    }
+    const rawBody = Buffer.concat(chunks).toString("utf8");
+
+    //  Extract signature from header
+    const providedSignature = req.headers["x-payaza-signature"] as string;
+    if (!providedSignature) {
+      return res.status(400).json({ error: "Missing signature" });
+    }
+
+    //  Compute expected signature
+    const secret = process.env.PAYAZA_SECRET_KEY ?? "";
+    const computedSignature = crypto
+      .createHmac("sha512", secret)
+      .update(rawBody, "utf8")
+      .digest("base64");
+
+    console.log("Provided:", providedSignature);
+    console.log("Computed:", computedSignature);
+
+    //  Compare signatures
+    if (providedSignature !== computedSignature) {
+      return res.status(401).json({ error: "Invalid signature" });
+    }
+
+    // 5️ Parse JSON *after* verification
+    const payload = JSON.parse(rawBody);
+
+    //  Handle webhook payload here
+    console.log("Webhook verified and received:", payload);
+
+    return res.status(200).json({ status: "ok" });
+  } catch (err) {
+    console.error("Webhook error:", err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 }
 
