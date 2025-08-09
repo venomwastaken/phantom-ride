@@ -11,10 +11,10 @@ import {
 } from "@/components/ui/form";
 import Dropdown from "@/components/Dropdown";
 import { useRouter } from "next/navigation";
-//import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 const HomeForm = () => {
-  type homeFormParams = {
+  type HomeFormParams = {
     pickup: string;
     date: string;
   };
@@ -22,7 +22,9 @@ const HomeForm = () => {
   //const [dateDisable, setDateDisable] = useState<boolean>(false);
 
   const router = useRouter();
-  const form = useForm<homeFormParams>();
+  const form = useForm<HomeFormParams>();
+  const [pickUpArray, setPickUpArray] = useState<string[]>([]);
+  const [isPickUpDisabled, setIsPickUpDisabled] = useState<boolean>(true);
 
   // useEffect(() => {
   //   if (form.getValues("pickup") !== "Accra(Circle)") {
@@ -33,7 +35,7 @@ const HomeForm = () => {
   //   }
   // }, [form.watch("pickup")]);
 
-  function onSubmit(values: homeFormParams) {
+  function onSubmit(values: HomeFormParams) {
     console.log(values);
 
     const query = [];
@@ -68,11 +70,8 @@ const HomeForm = () => {
                   <Dropdown
                     onChangeHandler={field.onChange}
                     value={field.value}
-                    items={[
-                      "Accra",
-                      "Tema",
-                    ]}
-                    placeholder="Pickup Location"
+                    items={["Accra", "Tema"]}
+                    placeholder="Drop off Location"
                   />
                 </FormControl>
                 <FormMessage />
@@ -88,7 +87,7 @@ const HomeForm = () => {
                   <Dropdown
                     onChangeHandler={field.onChange}
                     value={field.value}
-                    items={[ "Saturday (24/05/2025)", "Sunday (25/05/2025)"]}
+                    items={["Saturday (24/05/2025)", "Sunday (25/05/2025)"]}
                     placeholder="Select a Date"
                     //disabled={dateDisable}
                   />

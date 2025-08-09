@@ -1,16 +1,7 @@
 'use client'
+
+import styles from "../app/book/bs.module.css";
 import React from 'react'
-import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Dropdown from './Dropdown'
@@ -31,102 +22,98 @@ import { initializePayment } from '@/lib/actions/paymentPayaza.actions'
 import { useRouter } from "next/navigation";
 
 
+export function PayDialog ({paymentForm, onSubmit, price, data, handleBack}: 
+                            {paymentForm: any, onSubmit: (data: any) => void, price: number, data: any, handleBack: () => void}) {
 
 
-const formSchema = z.object({
-  phoneNumber: z.string().length(10, "Enter valid phone number"),
-  network: z.string().min(2, "Select a network")
-})
-
-
-
-export function PayDialog ({open, onOpenChange, data, price}:{open:boolean, onOpenChange:(open:boolean)=>void, data:any, price:number}) {
-const form = useForm<z.infer<typeof formSchema>>({
-  resolver: zodResolver(formSchema),
-  defaultValues: {
-    phoneNumber: "",
-    network: "",
-  },
-})
-
-const router= useRouter()
-
-function onSubmit(values: z.infer<typeof formSchema>) {
-  //console.log(values)
-  //console.log("Booking Data:", data)"
-
-  try {
-      initializePayment({
-        price: price,
-        phoneNumber: values.phoneNumber,
-        networkBankCode: (values.network==="MTN")?"MTN":(values.network==="Telecel Gh")?"VOD":"AIR",
-        email: data.email,
-        firstName: data.fullName.split(" ")[0],
-        lastName: data.fullName.split(" ").slice(-1)[0],
-        selectedSeats: data.seats,
-        reference: data.reference,
-      })
-  } catch (error) {
-    console.error("Error:", error);
-  }
-  router.push("/redirect");
-}
+// function onSubmit(values: z.infer<typeof formSchema>) {
+//   try {
+//       initializePayment({
+//         price: price,
+//         phoneNumber: values.phoneNumber,
+//         networkBankCode: (values.network==="MTN")?"MTN":(values.network==="Telecel Gh")?"VOD":"AIR",
+//         email: data.email,
+//         firstName: data.fullName.split(" ")[0],
+//         lastName: data.fullName.split(" ").slice(-1)[0],
+//         selectedSeats: data.seats,
+//         reference: data.reference,
+//       })
+//   } catch (error) {
+//     console.error("Error:", error);
+//   }
+// }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-[425px] bg-white rounded-md">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+    <div className={`${styles.cardForm}`}>
+      <Form {...paymentForm}>
+        <h2 className="bold text-xl">Make Payment</h2>
+        <FormDescription className="mt-1 mb-5 ">
+          Please ensure you have provided right information before you make payment.
+        </FormDescription>
+        <form onSubmit={paymentForm.handleSubmit(onSubmit)} className="space-y-[15px]">
+          <FormField
+            control={paymentForm.control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-xs text-neutral-700">Phone Number</FormLabel>
+                <FormControl>
+                  <Input placeholder="024XXXXXXX" 
+                    className={`${styles.whitebgInput} input`}
+                    {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <DialogHeader>
-              <DialogTitle>Make payment</DialogTitle>
-              <DialogDescription>
-                Enter your mobile money number to proceed.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="grid gap-3">
-              <div className="grid gap-2">
-                <FormField
-                  control={form.control}
-                  name="phoneNumber"
-                  render={({ field }) => (
-                <FormItem>
-                <Label htmlFor="name-1">Number</Label>
-                <Input {...field} className="bg-[#ebebeb] m-0 max-w-full outline outline-1 outline-neutral-500"/>
-                </FormItem>
-                )}
-                />
-
-              </div>
-
-              <div className="grid gap-3">
-                <FormField
-                  control={form.control}
-                  name="network"
-                  render={({ field }) => (
-                    <FormItem>
-                    <Label htmlFor="network">Network</Label>
-                    <Dropdown 
+          <FormField
+            control={paymentForm.control}
+            name="network"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-xs text-neutral-700">Network</FormLabel>
+                <FormControl>
+                  <Dropdown
                     onChangeHandler={field.onChange}
                     value={field.value}
-                    placeholder='network name' items={["MTN", "Telecel Gh", "AirtelTigo"]} className="dailog"/>
-                  </FormItem>
-                  )}
-                />
-              </div>
-            </div>
+                    items={["MTN", "Vodafone", "AirtelTigo"]}
+                    placeholder="Select a network"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} 
+          />
+          
+          <div className="flex justify-between !mt-[35px]">
+                <button
+                  type="button"
+                  className={"button"}
+                  // {`${
+                  //   isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                  // } button`}
+                  onClick={handleBack}
+                  // disabled={isSubmitting}
+                >
+                  Back
+                </button>
 
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
-              <Button type="submit" className='mb-2'>Proceed</Button>
-            </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-    </Dialog>
+                <button
+                  type="submit"
+                  className= {"button"}
+                  // {`${
+                  //   isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                  // } button`}
+                  // disabled={isSubmitting}
+                >
+                  {/*isSubmitting ? "Submitting..." : "Book Ride"*/}Book
+                </button>
+              </div>
+
+        </form>
+      </Form>
+    </div>
   )
 }
 

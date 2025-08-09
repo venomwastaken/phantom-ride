@@ -64,6 +64,12 @@
     border-color: var(--mylime); 
   }
 
+  .contain {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
 
 @media (max-width:1024px) {
     .bookingContainer{
@@ -72,10 +78,6 @@
         margin-top: 0;
     }
 
-    .cardForm {
-        width: 70%;
-        justify-self: center;
-    }
 
     .whitebgInput{
         max-width: 100%;
@@ -90,7 +92,6 @@
 
 @media (max-width:600px) {
     .cardForm {
-        width: 100%;
         margin-left: 0;
     }
 }

@@ -79,10 +79,10 @@ nav {
   display: block;
   background-color: var(--mygreen);
   color: white;
-  padding: 13px 18px;
+  padding: 12px 16px;
   border: none;
   border-radius: 8px;
-  margin-top: 15px;
+  cursor: pointer;
 }
 
 button:hover, .button:hover {

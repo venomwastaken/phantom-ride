@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {Montserrat} from "next/font/google";
 import "./globals.css";
+import BusWrapper from "@/components/BusContext";
 
 const montserratFont = Montserrat({
   subsets:["latin"],
@@ -27,11 +28,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <BusWrapper>
       <body
         className={montserratFont.className}
       >
         {children}
       </body>
+      </BusWrapper>
     </html>
   );
 }

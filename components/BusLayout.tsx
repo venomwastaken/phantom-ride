@@ -3,7 +3,8 @@ import styles from "../app/book/bs.module.css";
 import { useBusContext } from "./BusContext";
 import BusLoading from "./BusLoading";
 
-export default function BusLayout() {
+export default function BusLayout({price, handleBack, onSubmit, data}: 
+                                  {price: number, handleBack: () => void, onSubmit: (data: any) => void, data: any}) {
   const col1 = [
     "01",
     "04",
@@ -64,12 +65,13 @@ export default function BusLayout() {
       {isLoadingSeats ? (
         <BusLoading />
       ) : (
-        <div className={`${styles.cardForm} justify-self-end ${styles.contain}`}>
+        <div className={`${styles.cardForm} ${styles.contain} align-center`}>
           <div>
-            <h4 className="text-base font-medium my-0 mx-[2px]">Select a seat</h4>
-            <p className="text-[0.8rem] text-muted-foreground mt-1 mx-[2px]">
+            <h2 className="bold text-xl">Select a seat</h2>
+            <p className="text-[12px] text-muted-foreground mt-1 mx-[2px] mb-[20px]">
               BusId: {busId !== null ? busId : "XXXXXXX"}
             </p>
+
             <div className={`${styles.busSeats}`}>
               <div className={styles.col}>
                 {col1.map((seat) => (
@@ -141,6 +143,37 @@ export default function BusLayout() {
               </div>
             </div>
           </div>
+        
+          <p className="mt-[15px] text-xs text-gray-500 bold">
+              Amount to pay: GHS {price !== null ? price * selectedSeats.length : 0}.00
+          </p>
+
+          <div className="flex justify-between mt-3 w-full">
+              <button
+                type="button"
+                className={"button"}
+                // {`${
+                //   isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                // } button`}
+                onClick={handleBack}
+                // disabled={isSubmitting}
+              >
+                Back
+              </button>
+
+              <button
+                type="button"
+                className={"button"}
+                // {`${
+                //   isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                // } button`}
+                // disabled={isSubmitting}
+                onClick={() => onSubmit(data)} // Dummy argument to match the expected function signature
+              >
+                {/*isSubmitting ? "Submitting..." : "Book Ride"*/}Next
+              </button>
+            </div>
+        
         </div>
       )}
     </>

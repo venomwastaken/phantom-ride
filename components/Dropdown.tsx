@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 type DropdowmProps = {
   placeholder: string;
   value?: string;
-  onChangeHandler?: () => void;
+  onChangeHandler?: (value:any) => void;
   items: string[];
   disabled?: boolean;
   className?: string;

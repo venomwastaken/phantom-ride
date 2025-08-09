@@ -22,9 +22,9 @@ export const formSchema = z.object({
   phone: z.string().length(10, {
     message: "Phone number must be 10 digits.",
   }),
-  seats: z.string().min(2, {
-    message: "Select at least 1 seat.",
-  }),
+  // seats: z.string().min(2, {
+  //   message: "Select at least 1 seat.",
+  // }),
   agent: z.string(),
 
   emergencyContactInfo: z.string().min(2, {
@@ -33,3 +33,8 @@ export const formSchema = z.object({
   luggage: z.array(z.string()),
 })
 
+
+export const paymentFormSchema = z.object({
+  phoneNumber: z.string().length(10, "Enter valid phone number"),
+  network: z.string().min(2, "Select a network")
+})

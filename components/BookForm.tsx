@@ -1,8 +1,6 @@
 "use client";
 import styles from "../app/book/bs.module.css";
 import { Checkbox } from "@/components/ui/checkbox";
-
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -18,21 +16,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { formSchema } from "@/lib/validator";
 import Dropdown from "@/components/Dropdown";
-import { useEffect, useState } from "react";
-import { getSeats } from "@/lib/actions/bus.action";
-import { initializeTransaction } from "@/lib/actions/payment.action";
+import { useEffect, useRef, useState } from "react";
 import { useBusContext } from "./BusContext";
 import { useRouter } from "next/navigation";
-import PayDialog from "./PayDialog";
-import { initializePayment } from "@/lib/actions/paymentPayaza.actions";
+
 
 
 type bookFormProps = {
   pickup?: string;
   date?: string;
+  onSubmit: (values: z.infer<typeof formSchema>) => void;
+  handleBack: () => void;
+  form: ReturnType<typeof useForm<z.infer<typeof formSchema>>>;
 };
 
-export default function BookForm({ pickup, date}: bookFormProps) {
+export default function BookForm({ pickup, date, onSubmit, handleBack, form}: bookFormProps) {
   // if(pickup && pickup !== "Accra(Circle)") {
   //   date = "Saturday (26/04/2025)";
   // }
@@ -44,32 +42,10 @@ export default function BookForm({ pickup, date}: bookFormProps) {
   const [list, setList] = useState<string[]>([]);
   const [data, setData] = useState<object>({})
   const [otherLocation, setOtherLocation] = useState<string>("");
-  const initialVals = {
-    pickup: pickup ? pickup : "Accra",
-    date: date ? date : "Saturday (24/05/2025)",
-    fullName: "",
-    email: "",
-    phone: "",
-    seats: "",
-    agent: "",
-    emergencyContactInfo: "",
-    luggage: [],
-  };
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: initialVals,
-  });
 
   const {
-    setTakenSeats,
-    selectedSeats,
-    setSelectedSeats,
     isSubmitting,
-    setIsSubmitting,
-    setIsLoadingSeats,
-    setBusId,
-    busId,
   } = useBusContext();
 
   const luggageList = [
@@ -91,47 +67,21 @@ export default function BookForm({ pickup, date}: bookFormProps) {
                         "Circle (So Fresh Filling Station)", "Taifa Junction Bus Stop", "Nsawam (Total Filling Station)", "Other"];
   const temaPickups = ["Community 1 Station", "Ashaiman Overhead", "Other"];
 
-  const router= useRouter()
-
-
-  useEffect(() => {
-    const fetchSeats = async () => {
-      setIsLoadingSeats(true); // Start loading
-      try {
-        const bus = await getSeats({
-          pickup: form.getValues("pickup"),
-          date: form.getValues("date"),
-        });
-        if(form.getValues("pickup") === "Accra") {
-          form.setValue("location", "");
-          setList(accraPickups);
-          
-          // form.setValue("date", "Saturday (26/04/2025)");
-          // setDateDisable(true);
-         }else {
-          form.setValue("location", "");
-          setList(temaPickups);
-          /*setDateDisable(false);*/
-        }
-        setSelectedSeats([]);
-        setTakenSeats(bus?.takenSeats || []);
-        setPrice(bus?.price || 0);
-        setBusId(bus?.busId);
-      } catch (error) {
-        console.error("Error fetching seats:", error);
-      } finally {
-        setIsLoadingSeats(false); // End loading
-      }
-    };
-
-    fetchSeats();
-  }, [form.watch("date"), form.watch("pickup")]);
-
-  // 1. Define your form.
+  const prevPickupRef = useRef<string | undefined>(form.getValues("pickup"));
 
   useEffect(() => {
-    form.setValue("seats", selectedSeats.join(", "));
-  }, [selectedSeats]);
+    const currentPickup = form.getValues("pickup");
+    if (prevPickupRef.current !== currentPickup) {
+      form.setValue("location", "");
+      prevPickupRef.current = currentPickup;
+    }
+    if (currentPickup === "Accra") {
+      setList(accraPickups);
+    } else {
+      setList(temaPickups);
+    }
+    }, [form.watch("date"), form.watch("pickup")]);
+
 
   useEffect(() => {
     if(form.getValues("location") === "Other"){
@@ -140,67 +90,14 @@ export default function BookForm({ pickup, date}: bookFormProps) {
   }, [form.watch("location")]);
 
 
-  function generateReference() {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let ref = "";
-    for(let i=0;i<12;i++) {
-        ref += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return ref;
-}
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true); // Start submitting
-    values.location = (isOther)? `Other: ${otherLocation}`: values.location
-    const reference = generateReference();
-
-    // Create the booking on your server before payment
-    const bookingData = {
-      ...values,
-      reference: reference,
-      busId: busId,
-    };
-
-    try {
-      
-      // Send booking data to the server to create a pending booking via the API route
-      const response = await fetch("/api/book", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bookingData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Booking creation failed");
-      }
-
-      const bookingResponse = await response.json();
-      console.log("Booking Response:", bookingResponse);
-
-    } catch (error: any) {
-      console.error("Error:", error);
-    } finally {
-      setIsSubmitting(false); // End submitting
-    }
-    form.reset();
-    setSelectedSeats([]);
-    //router.push("/redirect")
-    // console.log(values);
-
-    setData(bookingData);
-    setOpen(true);
-  }
-
   return (
     <>
       <Form {...form}>
-        <div className={`${styles.cardForm} w-4/6`}>
+        <div className={`${styles.cardForm}`}>
           <h2 className="mb-5 bold text-xl">Book a ride</h2>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className=".form-container"
+            className="form-container"
           >
             <FormField
               control={form.control}
@@ -318,23 +215,7 @@ export default function BookForm({ pickup, date}: bookFormProps) {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="seats"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className={`${styles.whitebgInput} input`}
-                      placeholder="(selected seats)"
-                      {...field}
-                      readOnly
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
             <FormField
               control={form.control}
               name="agent"
@@ -419,22 +300,34 @@ export default function BookForm({ pickup, date}: bookFormProps) {
                 </FormItem>
               )}
             />
-            <button
-              type="submit"
-              className={`${
-                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-              } button`}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Submitting..." : "Book Ride"}
-            </button>
-            <p className="mt-[15px] text-xs text-gray-500 bold">
-              Amount to pay: GHS {price !== null ? price * selectedSeats.length : 0}.00
-            </p>
+            
+            <div className="flex justify-between mt-[35px]">
+              <button
+                type="button"
+                className={`${
+                  isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                } button button-outlin`}
+                onClick={handleBack}
+                disabled={isSubmitting}
+              >
+                Back
+              </button>
+
+              <button
+                type="submit"
+                className={`${
+                  isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                } button`}
+                disabled={isSubmitting}
+              >
+                {/*isSubmitting ? "Submitting..." : "Book Ride"*/}Next
+              </button>
+            </div>
+            
+        
           </form>
         </div>
       </Form>
-      <PayDialog open={open} onOpenChange={setOpen} data={data} price={price}/>
     </>
   );
 }

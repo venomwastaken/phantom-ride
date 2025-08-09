@@ -45,7 +45,7 @@ export default function BusLoading() {
 
   return (
     <>
-      <div className={`${styles.cardForm} justify-self-end ${styles.contain}`}>
+      <div className={`${styles.cardForm} ${styles.contain}`}>
         <div>
           <Skeleton className="h-5 w-28 mt-2 mb-2 mx-[2px]" />
           <Skeleton className="h-5 w-[118px] mt-1 mb-2 mx-[2px]" />
