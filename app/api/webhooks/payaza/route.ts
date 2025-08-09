@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     const computedSignature: string = crypto
           .createHmac('sha512', secretKey)
           .update(requestBody, 'utf8')
-          .digest('hex');
+          .digest('base64');
 
 
     // Compare computed signature with predefined signature
