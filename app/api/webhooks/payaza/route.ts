@@ -10,11 +10,13 @@ export async function POST(req: Request) {
   try {
     // Read the request body as a JSON object
     const body = await req.json();
-    console.log(body);
+    
 
     if (secret === req.headers.get('authorization')) {
+      console.log(body);
       // Process the event here
       if(body.status === "Completed"){
+        console.log("Payment completed successfully");
         const { reference, busId, seats, fullName, email, phone, tickets} = await findBooking(body.transaction_reference)
         const name = fullName.split(' ')[0]
 
