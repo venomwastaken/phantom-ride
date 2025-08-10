@@ -8,11 +8,51 @@ function generateBusId(terminalCode: string, busCount: number, day: string): str
     return `${terminalCode}${day}${busCount.toString().padStart(3, '0')}`;
   }
 
-export const getSeats = async ({pickup, date} : {pickup: string, date: string}) => {
+export const getSeats = async ({pickup, date, location} : {pickup: string, date: string, location: string}) => {
+
+const pickups = [
+    "Amasaman",
+    "Pokuase (Frimps Oil Filling Station)",
+    "Ofankor Barrier",
+    "Taifa Junction Bus Stop",
+    "Nsawam (Total Filling Station)",
+    "Medie"
+  ];
+
+
 //if(date === "Sunday (27/04/2025)"){pickup = "Accra(Circle)";}
 try {
     await dbConnect();
-    
+
+    // Shared segment handling
+    if (pickups.includes(location)) {
+
+        const temaBuses = await Bus.find({ pickup: "Tema", date });
+        const accraBuses = await Bus.find({ pickup: "Accra", date });
+
+        const temaAvailable = temaBuses.filter(b => !b.isFull);
+        const accraAvailable = accraBuses.filter(b => !b.isFull);
+
+        // If both are fully booked, just skip to normal logic
+        if (temaAvailable.length && accraAvailable.length) {
+            const temaTaken = temaAvailable[0].takenSeats;
+            const accraTaken = accraAvailable[0].takenSeats;
+
+            // Choose the less loaded bus, with your bias
+            if (temaTaken.length + 3 < accraTaken.length) {
+                pickup = "Tema";
+            } else {
+                pickup = "Accra";
+            }
+        } else if (temaAvailable.length) {
+            pickup = "Tema";
+        } else if (accraAvailable.length) {
+            pickup = "Accra";
+        }
+        // else: both full → leave pickup unchanged and let normal logic handle
+    }
+
+
     // if(date === "Sunday (27/04/2025)" && pickup === "Accra(Circle)") {
     //     const bus = await Bus.findOne({ pickup: pickup, date: date}, { availableSeats: true, takenSeats: true, _id: true, price: true, busId:true });
     //     const { availableSeats, takenSeats, _id, price, busId } = bus;

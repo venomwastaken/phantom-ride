@@ -103,12 +103,13 @@ export default function Book() {
     return ref;
   }
 
-  const fetchSeats = async (pickup: string, date: string) => {
+  const fetchSeats = async (pickup: string, date: string, location: string) => {
     setIsLoadingSeats(true); // Start loading
     try {
       const bus = await getSeats({
         pickup: pickup,
         date: date,
+        location: location
       });
 
       setTakenSeats(bus?.takenSeats || []);
@@ -130,11 +131,12 @@ export default function Book() {
   useEffect(() => {
     const pickupValue = form.watch("pickup");
     const dateValue = form.watch("date");
+    const locationValue = form.watch("location");
     setSelectedSeats([]);
-    if (pickupValue && dateValue) {
-      fetchSeats(pickupValue, dateValue);
+    if (pickupValue && dateValue && locationValue) {
+      fetchSeats(pickupValue, dateValue, locationValue);
     }
-  }, [form.watch("pickup"), form.watch("date")]);
+  }, [form.watch("pickup"), form.watch("date"), form.watch("location")]);
 
   const onSubmit = async (
     values: BookingData /*z.infer<typeof formSchema>*/

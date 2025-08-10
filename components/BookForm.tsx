@@ -73,6 +73,7 @@ export default function BookForm({
     "Circle (So Fresh Filling Station)",
     "Taifa Junction Bus Stop",
     "Nsawam (Total Filling Station)",
+    "Medie",
     "Other",
   ];
   const temaPickups = ["Community 1 Station", "Ashaiman Overhead", "Other"];
