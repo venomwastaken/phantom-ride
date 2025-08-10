@@ -5,7 +5,7 @@ import BusLayout from "@/components/BusLayout";
 import BookForm from "@/components/BookForm";
 import { useSearchParams } from "next/navigation";
 import { useBusContext } from "@/components/BusContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formSchema, paymentFormSchema } from "@/lib/validator";
 import { z } from "zod";
 import { getSeats } from "@/lib/actions/bus.action";
@@ -92,6 +92,7 @@ export default function Book() {
   const [isOther, setIsOther] = useState<boolean>(false);
   const [otherLocation, setOtherLocation] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
+    const [luggagePrice, setLuggagePrice] = useState<number>(0);
 
   function generateReference() {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -126,6 +127,15 @@ export default function Book() {
     }
   };
 
+  useEffect(() => {
+    const pickupValue = form.watch("pickup");
+    const dateValue = form.watch("date");
+    setSelectedSeats([]);
+    if (pickupValue && dateValue) {
+      fetchSeats(pickupValue, dateValue);
+    }
+  }, [form.watch("pickup"), form.watch("date")]);
+
   const onSubmit = async (
     values: BookingData /*z.infer<typeof formSchema>*/
   ) => {
@@ -138,8 +148,19 @@ export default function Book() {
         ...values,
         reference: reference,
       });
+      // await fetchSeats(values.pickup ?? "", values.date ?? "");
 
-      await fetchSeats(values.pickup ?? "", values.date ?? "");
+      setLuggagePrice(0);
+      if (values.luggage?.includes("fridge")) {
+        setLuggagePrice(prev => prev + 5);
+      }
+      if (values.luggage?.includes("microwave")) {
+        setLuggagePrice(prev => prev + 5.5);
+      }
+      if (values.luggage?.includes("tv")) {
+        setLuggagePrice(prev => prev + 6);
+      }
+
     } else if (step === 1) {
       setStep(step + 1);
       setData({
@@ -160,7 +181,8 @@ export default function Book() {
 
       try {
         initializePayment({
-          price: price,
+          busId: busId,
+          luggage: data.luggage ?? [],
           phoneNumber: values.phoneNumber ?? "",
           networkBankCode:
             values.network === "MTN"
@@ -221,6 +243,7 @@ export default function Book() {
           <div className="px-auto py-0 w-full">
             <BusLayout
               price={price}
+              luggagePrice={luggagePrice}
               handleBack={handleBack}
               data={data}
               onSubmit={onSubmit}

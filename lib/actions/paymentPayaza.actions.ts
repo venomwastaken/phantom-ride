@@ -1,7 +1,11 @@
 'use server'
 
+import { getBusPrice } from "./bus.action";
+import { getLuggagePrice } from "./luggage.actions";
+
 type Data = {
-    price : number,
+    busId: string,
+    luggage: string[],
     phoneNumber : string,
     networkBankCode : string,
     email : string,
@@ -11,8 +15,11 @@ type Data = {
     reference : string,
 }
 
-export async function initializePayment({price, phoneNumber, networkBankCode, email, firstName, lastName, selectedSeats, reference} : Data) {
-    const amount = (price * selectedSeats.split(", ").length);
+export async function initializePayment({busId, luggage, phoneNumber, networkBankCode, email, firstName, lastName, selectedSeats, reference} : Data) {
+    const price = await getBusPrice(busId);
+    const totalLuggagePrice = await getLuggagePrice(luggage)
+
+    const amount = ((Number(price) * selectedSeats.split(", ").length) + totalLuggagePrice);
     //console.log("Initializing payment with amount:", amount, "and reference:", reference);
     //sample request body:
     console.log({

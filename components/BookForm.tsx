@@ -52,15 +52,15 @@ export default function BookForm({
   const luggageList = [
     {
       id: "fridge",
-      label: "Fridge",
+      label: "Fridge (+ GHS 5.00)",
     },
     {
       id: "tv",
-      label: "TV",
+      label: "TV (+ GHS 6.00)",
     },
     {
       id: "microwave",
-      label: "Microwave",
+      label: "Microwave (+ GHS 5.50)",
     },
   ] as const;
 

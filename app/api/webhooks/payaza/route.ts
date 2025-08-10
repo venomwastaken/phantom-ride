@@ -85,6 +85,13 @@ export async function POST(request: Request) {
       console.error('Signature mismatch!');
       console.error('Computed Signature:', computedSignature);
       console.error('Predefined Signature:', predefinedSignature);
+      return new Response(
+        JSON.stringify({ error: 'Signature mismatch' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
   } catch (error) {

@@ -76,3 +76,14 @@ export const updateSeats = async ({ busId, seatsToBook }: { busId: string, seats
         console.error('Error updating bus:', error);
     }
 };
+
+
+export const getBusPrice = async (busId : string) => {
+    try {
+        await dbConnect();
+        const {price} = await Bus.findOne({busId:busId}, {price: true});
+        return price;
+    } catch (error) {
+        console.error('Error getting bus price:', error);
+    }
+}

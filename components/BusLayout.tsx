@@ -3,8 +3,8 @@ import styles from "../app/book/bs.module.css";
 import { useBusContext } from "./BusContext";
 import BusLoading from "./BusLoading";
 
-export default function BusLayout({price, handleBack, onSubmit, data}: 
-                                  {price: number, handleBack: () => void, onSubmit: (data: any) => void, data: any}) {
+export default function BusLayout({price, handleBack, onSubmit, data, luggagePrice}: 
+                                  {price: number, handleBack: () => void, onSubmit: (data: any) => void, data: any, luggagePrice: number}) {
   const col1 = [
     "01",
     "04",
@@ -145,7 +145,7 @@ export default function BusLayout({price, handleBack, onSubmit, data}:
           </div>
         
           <p className="mt-[15px] text-xs text-gray-500 bold">
-              Amount to pay: GHS {price !== null ? price * selectedSeats.length : 0}.00
+              Amount to pay: GHS {price !== null ? (price * selectedSeats.length + luggagePrice).toFixed(2): 0.00}
           </p>
 
           <div className="flex justify-between mt-3 w-full">
