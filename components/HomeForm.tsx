@@ -96,7 +96,7 @@ const HomeForm = () => {
               </FormItem>
             )}
           />
-          <button className="button" type="submit">
+          <button className="button mt-[15px]" type="submit">
             Book Ride
           </button>
         </form>

@@ -42,12 +42,12 @@ export default function Home() {
       <section className="wrapper section">
         <div className="flex flex-col justify-center max-w-lg">
           <h2 className="h2 bold">We prioritize your saftey and comfort</h2>
-          <p className="m-0">
+          <p className="m-0 mb-[20px]">
             From home to school and back home, we take you safely without
             compromising your comfort and convenience. Book straight from home
             and we pick you up at your terminal. Check out our pickup points.
           </p>
-          <button type="button" className="w-fit mt-1 button">
+          <button type="button" className="w-fit button">
             <Link href="/pickups">Pickup Point</Link>
           </button>
         </div>
@@ -82,7 +82,7 @@ export default function Home() {
         />
         <div className="flex flex-col justify-center max-w-lg order-1 lg:order-2">
           <h2 className="h2 bold">How it works</h2>
-          <ul className=" list-disc  pl-5">
+          <ul className=" list-disc pl-5 mb-[20px]">
             <li className="pb-1">
               <span className="font-medium">Step 1 :</span> Choose your pick-up
               point and destination.
@@ -96,7 +96,7 @@ export default function Home() {
               confirmation and enjoy the ride.
             </li>
           </ul>
-          <button type="button" className="w-fit mt-3 button">
+          <button type="button" className="w-fit button">
             <Link href="/book">Book Ride</Link>
           </button>
         </div>
