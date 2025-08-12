@@ -52,7 +52,7 @@
 
 import crypto from 'crypto';
 
-// Define the request body and secret keys as strings
+// Define payaza secret key from environment variables
 const secretKey: string = process.env.PAYAZA_SECRET_KEY!;
 
 // API route handler for webhook verification

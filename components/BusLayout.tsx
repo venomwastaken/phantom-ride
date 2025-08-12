@@ -3,8 +3,8 @@ import styles from "../app/book/bs.module.css";
 import { useBusContext } from "./BusContext";
 import BusLoading from "./BusLoading";
 
-export default function BusLayout({price, handleBack, onSubmit, data, luggagePrice}: 
-                                  {price: number, handleBack: () => void, onSubmit: (data: any) => void, data: any, luggagePrice: number}) {
+export default function BusLayout({price, handleBack, onSubmit, data, luggagePrice, isSubmitting}: 
+                                  {price: number, handleBack: () => void, onSubmit: (data: any) => void, data: any, luggagePrice: number, isSubmitting: boolean}) {
   const col1 = [
     "01",
     "04",
@@ -145,7 +145,7 @@ export default function BusLayout({price, handleBack, onSubmit, data, luggagePri
           </div>
         
           <p className="mt-[15px] text-xs text-gray-500 bold">
-              Amount to pay: GHS {price !== null ? (price * selectedSeats.length + luggagePrice).toFixed(2): 0.00}
+              Price: GHS {price !== null ? (price * selectedSeats.length).toFixed(2): 0.00}
           </p>
 
           <div className="flex justify-between mt-3 w-full">
@@ -163,11 +163,8 @@ export default function BusLayout({price, handleBack, onSubmit, data, luggagePri
 
               <button
                 type="button"
-                className={"button"}
-                // {`${
-                //   isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-                // } button`}
-                // disabled={isSubmitting}
+                className= {`button disabled:cursor-not-allowed disabled:opacity-50`}
+                disabled={isSubmitting || selectedSeats.length === 0}
                 onClick={() => onSubmit(data)} // Dummy argument to match the expected function signature
               >
                 {/*isSubmitting ? "Submitting..." : "Book Ride"*/}Next

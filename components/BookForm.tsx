@@ -51,16 +51,54 @@ export default function BookForm({
 
   const luggageList = [
     {
+      id: "extraBags",
+      label: "3 or more bags (+ GHS 30.00)",
+      price: 30,
+    },
+    {
       id: "fridge",
-      label: "Fridge (+ GHS 5.00)",
+      label: "Fridge (+ GHS 70.00)",
+      price: 70,
+    },
+    {
+      id: "fridgeSmall",
+      label: "Table Top Fridge (+ GHS 50.00)",
+      price: 50,
     },
     {
       id: "tv",
-      label: "TV (+ GHS 6.00)",
+      label: "TV (+ GHS 50.00)",
+      price: 50,
     },
     {
       id: "microwave",
-      label: "Microwave (+ GHS 5.50)",
+      label: "Microwave (+ GHS 30.00)",
+      price: 30,
+    },
+    {
+      id: "gasStove",
+      label: "Gas Stove (+ GHS 20.00)",
+      price: 20,
+    },
+    {
+      id: "fan",
+      label: "Standiing Fan (+ GHS 70.00)",
+      price: 70,
+    },
+    {
+      id: "cylinder",
+      label: "Gas Cylinder (+ GHS 70.00)",
+      price: 70,
+    },
+    {
+      id: "soundSystem",
+      label: "Sound System (+ GHS 200.00)",
+      price: 200,
+    },
+    {
+      id: "tableAndChair",
+      label: "Study Table and Chair (+ GHS 200.00)",
+      price: 200,
     },
   ] as const;
 
@@ -279,7 +317,7 @@ export default function BookForm({
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="luggage"
               render={() => (
@@ -329,20 +367,9 @@ export default function BookForm({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
-            <div className="flex justify-between mt-[35px]">
-              <button
-                type="button"
-                className={`${
-                  isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-                } button button-outlin`}
-                onClick={handleBack}
-                disabled={isSubmitting}
-              >
-                Back
-              </button>
-
+            <div className="flex justify-between mt-[35px] flex-row-reverse">
               <button
                 type="submit"
                 className={`${

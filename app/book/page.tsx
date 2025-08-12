@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PayDialog from "@/components/PayDialog";
 import { initializePayment } from "@/lib/actions/paymentPayaza.actions";
+import LuggageForm from "@/components/LuggageForm";
 
 export default function Book() {
   const {
@@ -56,7 +57,7 @@ export default function Book() {
   });
 
   const [step, setStep] = useState<number>(0);
-  const totalSteps = 3;
+  const totalSteps = 4;
   type BookingData = {
     pickup?: string;
     date?: string;
@@ -92,7 +93,60 @@ export default function Book() {
   const [isOther, setIsOther] = useState<boolean>(false);
   const [otherLocation, setOtherLocation] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
-    const [luggagePrice, setLuggagePrice] = useState<number>(0);
+  const [luggagePrice, setLuggagePrice] = useState<number>(0);
+
+  const luggageList = [
+  {
+    id: "extraBags",
+    label: "3 or more bags (+ GHS 30.00)",
+    price: 30,
+  },
+  {
+    id: "fridge",
+    label: "Fridge (+ GHS 70.00)",
+    price: 70,
+  },
+  {
+    id: "fridgeSmall",
+    label: "Table Top Fridge (+ GHS 50.00)",
+    price: 50,
+  },
+  {
+    id: "tv",
+    label: "TV (+ GHS 50.00)",
+    price: 50,
+  },
+  {
+    id: "microwave",
+    label: "Microwave (+ GHS 30.00)",
+    price: 30,
+  },
+  {
+    id: "gasStove",
+    label: "Gas Stove (+ GHS 20.00)",
+    price: 20,
+  },
+  {
+    id: "fan",
+    label: "Standiing Fan (+ GHS 70.00)",
+    price: 70,
+  },
+  {
+    id: "cylinder",
+    label: "Gas Cylinder (+ GHS 70.00)",
+    price: 70,
+  },
+  {
+    id: "soundSystem",
+    label: "Sound System (+ GHS 200.00)",
+    price: 200,
+  },
+  {
+    id: "tableAndChair",
+    label: "Study Table and Chair (+ GHS 200.00)",
+    price: 200,
+  },
+] as const;
 
   function generateReference() {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -151,19 +205,23 @@ export default function Book() {
         reference: reference,
       });
       // await fetchSeats(values.pickup ?? "", values.date ?? "");
+    } else if (step === 1) {
+      setStep(step + 1);
+      setData({
+        ...data,
+        ...values
+      });
 
       setLuggagePrice(0);
-      if (values.luggage?.includes("fridge")) {
-        setLuggagePrice(prev => prev + 5);
+      (values.luggage ?? []).map((item) => {
+        const luggageItem = luggageList.find((l) => l.id === item);
+        if (luggageItem) {
+          setLuggagePrice((prev) => prev + luggageItem.price);
+        }
       }
-      if (values.luggage?.includes("microwave")) {
-        setLuggagePrice(prev => prev + 5.5);
-      }
-      if (values.luggage?.includes("tv")) {
-        setLuggagePrice(prev => prev + 6);
-      }
+      );
 
-    } else if (step === 1) {
+    } else if (step === 2) {
       setStep(step + 1);
       setData({
         ...data,
@@ -243,21 +301,33 @@ export default function Book() {
         )}
         {step === 1 && (
           <div className="px-auto py-0 w-full">
+            <LuggageForm
+              isSubmitting={isSubmitting}
+              form={form}
+              onSubmit={onSubmit}
+              handleBack={handleBack}
+            />
+          </div>
+        )}
+        {step === 2 && (
+          <div className="px-auto py-0 w-full">
             <BusLayout
               price={price}
               luggagePrice={luggagePrice}
               handleBack={handleBack}
               data={data}
               onSubmit={onSubmit}
+              isSubmitting={isSubmitting}
             />
           </div>
         )}
-        {step === 2 && (
+        {step === 3 && (
           <div className="px-auto py-0 w-full">
             <PayDialog
               paymentForm={paymentForm}
               onSubmit={onSubmit}
-              data={data}
+              selectedSeats={selectedSeats}
+              luggagePrice={luggagePrice}
               price={price}
               handleBack={handleBack}
             />

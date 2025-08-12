@@ -21,8 +21,8 @@ import {
 
 
 
-export function PayDialog ({paymentForm, onSubmit, price, data, handleBack}: 
-                            {paymentForm: any, onSubmit: (data: any) => void, price: number, data: any, handleBack: () => void}) {
+export function PayDialog ({paymentForm, onSubmit, price, selectedSeats, handleBack, luggagePrice}: 
+                            {paymentForm: any, onSubmit: (data: any) => void, price: number, selectedSeats: string[], handleBack: () => void, luggagePrice: number}) {
 
 
 // function onSubmit(values: z.infer<typeof formSchema>) {
@@ -47,7 +47,10 @@ export function PayDialog ({paymentForm, onSubmit, price, data, handleBack}:
       <Form {...paymentForm}>
         <h2 className="bold text-xl">Make Payment</h2>
         <FormDescription className="mt-1 mb-5 ">
-          Please ensure you have provided right information before you make payment.
+          <span className="bold">Total amount to pay is GHS {`${((price*selectedSeats.length)+luggagePrice).toFixed(2)}`}</span>. 
+          <br />This amount includes the price  of the bus <span>(GHS {`${(price*selectedSeats.length).toFixed(2)}`}) </span> 
+          ticket and any additional luggage fees (GHS {`${(luggagePrice).toFixed(2)}`}).
+          Please ensure you have provided the right information before you make payment.
         </FormDescription>
         <form onSubmit={paymentForm.handleSubmit(onSubmit)} className="space-y-[15px]">
           <FormField
