@@ -3,7 +3,7 @@
 import Navbar from "@/components/shared/Navbar";
 import BusLayout from "@/components/BusLayout";
 import BookForm from "@/components/BookForm";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useBusContext } from "@/components/BusContext";
 import { useEffect, useState } from "react";
 import { formSchema, paymentFormSchema } from "@/lib/validator";
@@ -14,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import PayDialog from "@/components/PayDialog";
 import { initializePayment } from "@/lib/actions/paymentPayaza.actions";
 import LuggageForm from "@/components/LuggageForm";
+import { set } from "mongoose";
 
 export default function Book() {
   const {
@@ -27,6 +28,7 @@ export default function Book() {
     busId,
   } = useBusContext();
 
+  const router = useRouter();
   const searchParams = useSearchParams();
   const pickup = searchParams.get("pickup") || "";
   const date = searchParams.get("date") || "";
@@ -275,12 +277,21 @@ export default function Book() {
       } catch (error) {
         console.error("Error:", error);
       } finally {
+        
+        form.reset();
+        paymentForm.reset();
         setIsSubmitting(false);
         setSelectedSeats([]);
         setTakenSeats([]);
         setBusId("");
         setData({});
         setStep(0);
+        setLuggagePrice(0);
+        setIsOther(false);
+        setOtherLocation("");
+        setPrice(0);
+        
+        router.push("/redirect");
       }
     }
   };
