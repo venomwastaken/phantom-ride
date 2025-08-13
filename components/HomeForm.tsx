@@ -71,7 +71,7 @@ const HomeForm = () => {
                     onChangeHandler={field.onChange}
                     value={field.value}
                     items={["Accra", "Tema", "Adenta", "Cape Coast/Takoradi"]}
-                    placeholder="Drop off Location"
+                    placeholder="Select a bus"
                   />
                 </FormControl>
                 <FormMessage />

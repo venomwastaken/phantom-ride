@@ -164,7 +164,7 @@ export default function BookForm({
                       onChangeHandler={field.onChange}
                       value={field.value}
                       items={["Accra", "Tema", "Adenta", "Cape Coast/Takoradi"]}
-                      placeholder="Pickup"
+                      placeholder="Select a bus"
                       disabled={isSubmitting} // Disable during submission
                     />
                   </FormControl>
@@ -182,7 +182,7 @@ export default function BookForm({
                       onChangeHandler={field.onChange}
                       value={field.value}
                       items={list}
-                      placeholder="Pickup Point"
+                      placeholder="Select your stop"
                       disabled={isSubmitting} // Disable during submission
                     />
                   </FormControl>
