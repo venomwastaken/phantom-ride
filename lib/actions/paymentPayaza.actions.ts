@@ -114,7 +114,6 @@ export async function checkPaymentStatus(reference : string) {
 
 
         const data = await resp.json();
-        console.log(`https://api.payaza.africa/live/subsidiary/collections/v1/check-status?transaction_reference=${reference}&country_code=KE`)
         console.log(data);
 
         if (resp.ok) {

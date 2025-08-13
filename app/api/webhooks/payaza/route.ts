@@ -88,20 +88,20 @@ export async function POST(request: Request) {
       console.error('Predefined Signature:', predefinedSignature);
 
       const body = requestBody ? JSON.parse(requestBody) : {};
-      const { reference } = body;
+      const { transaction_reference } = body;
 
-      const resp = await checkPaymentStatus(reference);
+      const resp = await checkPaymentStatus(transaction_reference);
       console.log('Payment Status:', resp);
 
       if (resp.data.transaction_status === "Completed") {
         console.log("Payment completed successfully");
         
-        const booking = await findBooking(reference);
-        const { reference: bookingReference, busId, seats, fullName, email, phone, tickets } = booking;
+        const booking = await findBooking(transaction_reference);
+        const { reference, busId, seats, fullName, email, phone, tickets } = booking;
         const name = fullName.split(' ')[0];
 
         await updateSeats({ busId: busId, seatsToBook: seats.split(", ") });
-        await updateBookingStatus(bookingReference);
+        await updateBookingStatus(reference);
         await sendNotification({
           name: name,
           email: email,
