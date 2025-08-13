@@ -231,6 +231,7 @@ export default function Book() {
         seats: selectedSeats.toString(),
       });
     } else {
+      setIsSubmitting(true);
       setData({
         ...data,
         busId: busId,

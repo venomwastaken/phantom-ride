@@ -89,6 +89,7 @@ export async function POST(request: Request) {
 
       const body = requestBody ? JSON.parse(requestBody) : {};
       const { transaction_reference } = body;
+      console.log('Transaction Reference:', transaction_reference);
 
       const resp = await checkPaymentStatus(transaction_reference);
       console.log('Payment Status:', resp);
