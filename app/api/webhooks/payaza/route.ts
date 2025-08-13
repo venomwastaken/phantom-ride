@@ -98,17 +98,22 @@ export async function POST(request: Request) {
         console.log("Payment completed successfully");
         
         const booking = await findBooking(transaction_reference);
-        const { reference, busId, seats, fullName, email, phone, tickets } = booking;
+        const { reference, busId, seats, fullName, email, phone, tickets, status } = booking;
         const name = fullName.split(' ')[0];
 
-        await updateSeats({ busId: busId, seatsToBook: seats.split(", ") });
-        await updateBookingStatus(reference);
-        await sendNotification({
-          name: name,
-          email: email,
-          phone: `233${phone.substring(1)}`,
-          tickets: tickets,
+        if (status === "pending") {
+          await updateSeats({ busId: busId, seatsToBook: seats.split(", ") });
+          await updateBookingStatus(reference);
+          await sendNotification({
+            name: name,
+            email: email,
+            phone: `233${phone.substring(1)}`,
+            tickets: tickets,
         });
+        }
+
+
+
       }
 
       return new Response(

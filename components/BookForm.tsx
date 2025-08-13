@@ -92,12 +92,12 @@ export default function BookForm({
     {
       id: "soundSystem",
       label: "Sound System (+ GHS 60.00)",
-      price: 200,
+      price: 60,
     },
     {
       id: "tableAndChair",
       label: "Study Table and Chair (+ GHS 100.00)",
-      price: 200,
+      price: 100,
     },
   ] as const;
 
@@ -284,9 +284,9 @@ export default function BookForm({
                         "Daniel",
                         "Thelma",
                         "Derrick",
-                        "Rodolphe",
-                        "Desmond",
                         "Palba",
+                        "Desmond",
+                        "Nathaniel",
                         "Nana Banyin",
                         "Raymond",
                         "Zerubabel",
