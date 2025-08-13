@@ -35,7 +35,7 @@ export default function Book() {
 
   const initialVals = {
     pickup: pickup ? pickup : "Accra",
-    date: date ? date : "Saturday (24/05/2025)",
+    date: date ? date : "Friday (05/09/2025)",
     fullName: "",
     email: "",
     phone: "",
@@ -141,12 +141,12 @@ export default function Book() {
   {
     id: "soundSystem",
     label: "Sound System (+ GHS 200.00)",
-    price: 200,
+    price: 60,
   },
   {
     id: "tableAndChair",
     label: "Study Table and Chair (+ GHS 200.00)",
-    price: 200,
+    price: 100,
   },
 ] as const;
 

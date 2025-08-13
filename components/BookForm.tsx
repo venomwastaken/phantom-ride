@@ -210,7 +210,7 @@ export default function BookForm({
                     <Dropdown
                       onChangeHandler={field.onChange}
                       value={field.value}
-                      items={["Saturday (24/05/2025)", "Sunday (25/05/2025)"]}
+                      items={["Friday (05/09/2025)", "Saturday (06/09/2025)", "Sunday (07/09/2025)"]}
                       placeholder="Date"
                       disabled={isSubmitting} // Disable during submission
                     />
@@ -288,7 +288,9 @@ export default function BookForm({
                         "Desmond",
                         "Palba",
                         "Nana Banyin",
+                        "Raymond",
                         "Zerubabel",
+                        "Joshua"
                       ]}
                       placeholder="Agent"
                       disabled={isSubmitting} // Disable during submission

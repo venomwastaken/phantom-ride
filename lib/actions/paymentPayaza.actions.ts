@@ -86,10 +86,44 @@ export async function initializePayment({busId, luggage, phoneNumber, networkBan
         console.error('Error initializing transaction:', error);
         throw new Error('Failed to initialize transaction');
     }
+}
 
 
 
+export async function checkPaymentStatus(reference : string) {
+    const publicKey = process.env.PAYAZA_PUBLIC_KEY!
 
 
-  
+    if (!publicKey) {
+        throw new Error('Missing Payaza public key.');
+    }
+
+    try {
+        const resp = await fetch(
+            `https://api.payaza.africa/live/subsidiary/collections/v1/check-status?transaction_reference=${reference}&country_code=GH`,
+            {
+            method: 'GET',
+            headers: {
+                'X-TenantID': 'live', 
+                'X-ProductID': 'app', 
+                'Authorization': `Payaza ${publicKey}`,
+                'Content-Type': 'application/json'
+            },
+            }
+        );
+
+
+        const data = await resp.json();
+        console.log(data);
+
+        if (resp.ok) {
+            return { status: true, message: 'Check Successful', data };
+        } else {
+            throw new Error(data.message || 'An error occurred during the transaction check');
+        }
+
+    } catch (error) {
+        console.error('Error checking transaction status:', error);
+        throw new Error('Failed to check transaction status');
+    }
 }

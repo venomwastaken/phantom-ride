@@ -1,8 +1,8 @@
 // // app/api/webhooks/paystack/route.ts
 // import { NextResponse } from 'next/server';
-// import { findBooking, updateBookingStatus } from '@/lib/actions/book.action';
-// import { updateSeats } from '@/lib/actions/bus.action';
-// import { sendNotification } from '@/lib/actions/notification.actions';
+import { findBooking, updateBookingStatus } from '@/lib/actions/book.action';
+import { updateSeats } from '@/lib/actions/bus.action';
+import { sendNotification } from '@/lib/actions/notification.actions';
 
 // const secret = process.env.PAYAZA_PUBLIC_KEY!;
 
@@ -50,6 +50,7 @@
 // }
 
 
+import { checkPaymentStatus } from '@/lib/actions/paymentPayaza.actions';
 import crypto from 'crypto';
 
 // Define payaza secret key from environment variables
@@ -85,6 +86,30 @@ export async function POST(request: Request) {
       console.error('Signature mismatch!');
       console.error('Computed Signature:', computedSignature);
       console.error('Predefined Signature:', predefinedSignature);
+
+      const body = requestBody ? JSON.parse(requestBody) : {};
+      const { reference } = body;
+
+      const resp = await checkPaymentStatus(reference);
+      console.log('Payment Status:', resp);
+
+      if (resp.data.transaction_status === "Completed") {
+        console.log("Payment completed successfully");
+        
+        const booking = await findBooking(reference);
+        const { reference: bookingReference, busId, seats, fullName, email, phone, tickets } = booking;
+        const name = fullName.split(' ')[0];
+
+        await updateSeats({ busId: busId, seatsToBook: seats.split(", ") });
+        await updateBookingStatus(bookingReference);
+        await sendNotification({
+          name: name,
+          email: email,
+          phone: `233${phone.substring(1)}`,
+          tickets: tickets,
+        });
+      }
+
       return new Response(
         JSON.stringify({ error: 'Signature mismatch' }),
         {
