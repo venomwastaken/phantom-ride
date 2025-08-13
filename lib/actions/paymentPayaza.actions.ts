@@ -100,7 +100,7 @@ export async function checkPaymentStatus(reference : string) {
 
     try {
         const resp = await fetch(
-            `https://api.payaza.africa/live/subsidiary/collections/v1/check-status?transaction_reference=${reference}&country_code=KE`,
+            `https://api.payaza.africa/live/subsidiary/collections/v1/check-status?transaction_reference=${reference}&country_code=GH`,
             {
             method: 'GET',
             headers: {
