@@ -21,8 +21,8 @@ import {
 
 
 
-export function PayDialog ({paymentForm, onSubmit, price, selectedSeats, handleBack, luggagePrice}: 
-                            {paymentForm: any, onSubmit: (data: any) => void, price: number, selectedSeats: string[], handleBack: () => void, luggagePrice: number}) {
+export function PayDialog ({paymentForm, onSubmit, price, selectedSeats, handleBack, luggagePrice, isSubmitting}: 
+                            {paymentForm: any, onSubmit: (data: any) => void, price: number, selectedSeats: string[], handleBack: () => void, luggagePrice: number, isSubmitting: boolean}) {
 
 
 // function onSubmit(values: z.infer<typeof formSchema>) {
@@ -103,11 +103,10 @@ export function PayDialog ({paymentForm, onSubmit, price, selectedSeats, handleB
 
                 <button
                   type="submit"
-                  className= {"button"}
-                  // {`${
-                  //   isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-                  // } button`}
-                  // disabled={isSubmitting}
+                  className= {`${
+                    isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                  } button`}
+                  disabled={isSubmitting}
                 >
                   {/*isSubmitting ? "Submitting..." : "Book Ride"*/}Book
                 </button>

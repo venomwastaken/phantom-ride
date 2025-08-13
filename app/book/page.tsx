@@ -342,6 +342,7 @@ export default function Book() {
               luggagePrice={luggagePrice}
               price={price}
               handleBack={handleBack}
+              isSubmitting={isSubmitting}
             />
           </div>
         )}
