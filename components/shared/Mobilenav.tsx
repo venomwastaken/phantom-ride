@@ -46,7 +46,7 @@ const Mobilenav:React.FC<NavbarProps> = ({color}) => {
                 <Separator className="mt-4"/>
                 <div>
                     <ul className={`flex flex-col gap-10 text-3xl bold mt-5 ${color==="white"?"text-white":"text-neutral-800"} `} >
-                        <li ><Link href="/pickups" className="hover:opacity-50">Pickups</Link></li>
+                        <li ><Link href="/pickups" className="hover:opacity-50">End-points</Link></li>
                         <li ><Link href="/about" className="hover:opacity-50">About Us</Link></li>
                         <li ><Link href="/faqs" className="hover:opacity-50">FAQs</Link></li>
                         <li ><Link href="/contact" className="hover:opacity-50">Contact Us</Link></li>

@@ -14,7 +14,7 @@ const Navbar: React.FC<NavbarProps> = ({ color = 'white' }) => {
         
         <div className= "hidden lg:flex">
           <ul className={`${styles.navLinks} font-medium`}>
-            <li className={styles.navLink}><Link href="/pickups">Pickups</Link></li>
+            <li className={styles.navLink}><Link href="/pickups">End-points</Link></li>
             <li className={styles.navLink}><Link href="/about">About Us</Link></li>
             <li className={styles.navLink}><Link href="/faqs">FAQs</Link></li>
             <li className={styles.navLink}><Link href="/contact">Contact Us</Link></li>

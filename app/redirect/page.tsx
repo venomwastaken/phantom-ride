@@ -30,7 +30,7 @@ const redirect = () => {
           <p className="w-3/4">
             We have recieved your booking request and it will proccessed shortly.
             You will recieve a confirmation message containing your ticket code via email and sms.
-            For now, check out our <Link href="/pickups" className = "underline">pickup points</Link>.
+            For now, check out our <Link href="/pickups" className = "underline">end-points</Link>.
           </p>
         </div>
       </section>
