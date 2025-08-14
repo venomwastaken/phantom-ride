@@ -145,7 +145,9 @@ export default function BusLayout({price, handleBack, onSubmit, data, luggagePri
           </div>
         
           <p className="mt-[15px] text-xs text-gray-500 bold">
-              Price: GHS {price !== null ? (price * selectedSeats.length).toFixed(2): 0.00}
+              Price: GHS {price !== null ? (price * selectedSeats.length).toFixed(2): 0.00} + {
+                luggagePrice !== null ? luggagePrice.toFixed(2): 0.00
+              }(luggage)
           </p>
 
           <div className="flex justify-between mt-3 w-full">

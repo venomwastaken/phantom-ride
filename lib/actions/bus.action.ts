@@ -70,7 +70,7 @@ try {
         const day = (date==="Friday (05/09/2025)")? "FRI":((date==="Saturday (06/09/2025)")? "SAT":"SUN");
         const newbusId = generateBusId(terminalCode, numberOfBuses + 1, day);
         const { availableSeats, takenSeats, _id, price, busId} = await Bus.create({pickup: pickup, date: date, 
-            price: (pickup === "Accra")? 1:((pickup === "Tema")? 170: ((pickup === "Adenta")? 170: 170)), busId:newbusId });
+            price: (pickup === "Accra")? 153:((pickup === "Tema")? 173: ((pickup === "Adenta")? 173: 173)), busId:newbusId });
         return { availableSeats, takenSeats, _id: _id.toString(), price, busId};
     }
     
