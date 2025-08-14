@@ -64,13 +64,13 @@ const luggageList = [
   },
   {
     id: "soundSystem",
-    label: "Sound System (+ GHS 200.00)",
-    price: 200,
+    label: "Sound System (+ GHS 100.00)",
+    price: 100,
   },
   {
     id: "tableAndChair",
-    label: "Study Table and Chair (+ GHS 200.00)",
-    price: 200,
+    label: "Study Table and Chair (+ GHS 100.00)",
+    price: 100,
   },
 ] as const;
 

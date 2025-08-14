@@ -53,6 +53,19 @@ const pickUps = () => {
               <p className="mt-2">KFC Adenta</p>
             </div>
           </Link>
+          <Link href="#">
+            <div className={styles.cardPickup}>
+            <Image
+                src="/assets/icons/pin_drop_green.png"
+                alt="pin_drop"
+                sizes="100vw"
+                width={90}
+                height={90}
+              />
+              <h3 className="text-xl font-semibold mt-4">Cape Coast/Tarkoradi</h3>
+              <p className="mt-2">KFC Adenta</p>
+            </div>
+          </Link>
         </div>
       </section>
       <Footer />

@@ -91,8 +91,8 @@ export default function BookForm({
     },
     {
       id: "soundSystem",
-      label: "Sound System (+ GHS 60.00)",
-      price: 60,
+      label: "Sound System (+ GHS 100.00)",
+      price: 100,
     },
     {
       id: "tableAndChair",

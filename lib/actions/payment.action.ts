@@ -1,10 +1,27 @@
 'use server'
 
+import { getBusPrice } from "./bus.action";
+import { getLuggagePrice } from "./luggage.actions";
 
-export async function initializeTransaction(email: string, price: number, selectedSeats: string[]) {
+
+
+export async function initializeTransaction(email: string, busId: string, selectedSeats: string[], location: string, luggage: string[]) {
+
+  const pickups = [
+    "Amasaman",
+    "Pokuase (Frimps Oil Filling Station)",
+    "Ofankor Barrier",
+    "Taifa Junction Bus Stop",
+    "Nsawam (Total Filling Station)",
+    "Medie"
+  ];
+
   const paystackUrl = 'https://api.paystack.co/transaction/initialize';
   const secretKey = process.env.PAYSTACK_SECRET_KEY;
-  const amount = (price * selectedSeats.length * 100).toString()
+  const price = (pickups.includes(location))? 150:await getBusPrice(busId);
+  const totalLuggagePrice = await getLuggagePrice(luggage)
+
+  const amount = ((price * selectedSeats.length * 100) + (totalLuggagePrice * 100)).toString()
   // Ensure the secret key is available
   if (!secretKey) {
     throw new Error('Missing Paystack secret key.');

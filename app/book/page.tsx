@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import PayDialog from "@/components/PayDialog";
 import { initializePayment } from "@/lib/actions/paymentPayaza.actions";
 import LuggageForm from "@/components/LuggageForm";
-import { set } from "mongoose";
+import { initializeTransaction } from "@/lib/actions/payment.action";
 
 export default function Book() {
   const {
@@ -150,6 +150,15 @@ export default function Book() {
   },
 ] as const;
 
+const pickups = [
+    "Amasaman",
+    "Pokuase (Frimps Oil Filling Station)",
+    "Ofankor Barrier",
+    "Taifa Junction Bus Stop",
+    "Nsawam (Total Filling Station)",
+    "Medie"
+  ];
+
   function generateReference() {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let ref = "";
@@ -169,7 +178,10 @@ export default function Book() {
       });
 
       setTakenSeats(bus?.takenSeats || []);
-      setPrice(bus?.price || 0);
+      if (pickups.includes(location)) {
+        setPrice(150);
+      }else {
+      setPrice(bus?.price || 0);}
       setBusId(bus?.busId);
     } catch (error) {
       console.error("Error fetching seats:", error);
@@ -230,35 +242,37 @@ export default function Book() {
         busId: busId,
         seats: selectedSeats.toString(),
       });
-    } else {
-      setIsSubmitting(true);
-      setData({
-        ...data,
-        busId: busId,
-        seats: selectedSeats.toString(),
-        phoneNumber: values.phoneNumber,
-        network: values.network,
-      });
+    // } else {
+    //   setIsSubmitting(true);
+    //   setData({
+    //     ...data,
+    //     busId: busId,
+    //     seats: selectedSeats.toString(),
+    //     phoneNumber: values.phoneNumber,
+    //     network: values.network,
+    //   });
 
-      console.log("Final Data:", data);
+    //   console.log("Final Data:", data);
 
-      try {
-        initializePayment({
+    try {
+      // Initialize the transaction with Paystack
+      const result = await initializeTransaction(
+        data.email || "",
+        busId,
+        selectedSeats,
+        data.location || "",
+        data.luggage || [],
+      );
+
+      if (typeof window !== "undefined" && result && result.data) {
+        const { default: PaystackPop } = await import("@paystack/inline-js");
+
+        // Create the booking on your server before payment
+        const bookingData = {
+          ...data,
+          reference: result.data.data.reference,
           busId: busId,
-          luggage: data.luggage ?? [],
-          phoneNumber: values.phoneNumber ?? "",
-          networkBankCode:
-            values.network === "MTN"
-              ? "MTN"
-              : values.network === "Telecel Gh"
-              ? "VOD"
-              : "AIR",
-          email: data.email ?? "",
-          firstName: (data.fullName ?? "").split(" ")[0],
-          lastName: (data.fullName ?? "").split(" ").slice(-1)[0],
-          selectedSeats: data.seats ?? "",
-          reference: data.reference ?? "",
-        });
+        };
 
         // Send booking data to the server to create a pending booking via the API route
         const response = await fetch("/api/book", {
@@ -266,15 +280,24 @@ export default function Book() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify({...bookingData, seats: selectedSeats.join(", ")}),
         });
 
         if (!response.ok) {
+          console.log(response);
           throw new Error("Booking creation failed");
+          
         }
 
         const bookingResponse = await response.json();
         console.log("Booking Response:", bookingResponse);
+
+        // Open Paystack popup for payment
+        const popup = new PaystackPop();
+        popup.resumeTransaction(result.data.data.access_code);
+      } else {
+        throw new Error("Transaction initialization failed");
+      }
       } catch (error) {
         console.error("Error:", error);
       } finally {
@@ -333,7 +356,7 @@ export default function Book() {
             />
           </div>
         )}
-        {step === 3 && (
+        {/* {step === 3 && (
           <div className="px-auto py-0 w-full">
             <PayDialog
               paymentForm={paymentForm}
@@ -345,7 +368,7 @@ export default function Book() {
               isSubmitting={isSubmitting}
             />
           </div>
-        )}
+        )} */}
       </div>
     </>
   );

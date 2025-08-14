@@ -167,7 +167,7 @@ export default function BusLayout({price, handleBack, onSubmit, data, luggagePri
                 disabled={isSubmitting || selectedSeats.length === 0}
                 onClick={() => onSubmit(data)} // Dummy argument to match the expected function signature
               >
-                {/*isSubmitting ? "Submitting..." : "Book Ride"*/}Next
+                {/*isSubmitting ? "Submitting..." : "Book Ride"*/}Book
               </button>
             </div>
         
