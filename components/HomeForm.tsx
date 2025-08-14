@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import Dropdown from "@/components/Dropdown";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const HomeForm = () => {
   type HomeFormParams = {
@@ -19,21 +19,29 @@ const HomeForm = () => {
     date: string;
   };
 
-  //const [dateDisable, setDateDisable] = useState<boolean>(false);
+  const [dateDisable, setDateDisable] = useState<boolean>(false);
 
   const router = useRouter();
   const form = useForm<HomeFormParams>();
-  const [pickUpArray, setPickUpArray] = useState<string[]>([]);
+  const [dateList, setDateList] = useState<string[]>([]);
   const [isPickUpDisabled, setIsPickUpDisabled] = useState<boolean>(true);
 
-  // useEffect(() => {
-  //   if (form.getValues("pickup") !== "Accra(Circle)") {
-  //     form.setValue("date", "Saturday (26/04/2025)");
-  //     setDateDisable(true);
-  //   } else {
-  //     setDateDisable(false);
-  //   }
-  // }, [form.watch("pickup")]);
+  const temaDate = ["Saturday (06/09/2025)", "Sunday (07/09/2025)"];
+  const accraDate = ["Friday (05/09/2025)", "Saturday (06/09/2025)", "Sunday (07/09/2025)"];
+
+  useEffect(() => {
+    const pickupValue = form.watch("pickup");
+    if (pickupValue === "Adenta" || pickupValue === "Cape Coast/Takoradi") {
+      form.setValue("date", "Saturday (06/09/2025)");
+      setDateDisable(true);
+    } else if (pickupValue === "Tema") {
+      setDateList(temaDate);
+      setDateDisable(false);
+    }else {
+      setDateList(accraDate);
+      setDateDisable(false);
+    }
+  }, [form.watch("pickup")]);
 
   function onSubmit(values: HomeFormParams) {
     console.log(values);
@@ -87,9 +95,9 @@ const HomeForm = () => {
                   <Dropdown
                     onChangeHandler={field.onChange}
                     value={field.value}
-                    items={["Friday (05/09/2025)", "Saturday (06/09/2025)", "Sunday (07/09/2025)"]}
+                    items={dateList}
                     placeholder="Select a Date"
-                    //disabled={dateDisable}
+                    disabled={dateDisable}
                   />
                 </FormControl>
                 <FormMessage />

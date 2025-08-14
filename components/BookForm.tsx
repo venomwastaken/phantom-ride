@@ -25,6 +25,8 @@ type bookFormProps = {
   onSubmit: (values: z.infer<typeof formSchema>) => void;
   handleBack: () => void;
   form: ReturnType<typeof useForm<z.infer<typeof formSchema>>>;
+  dateList: string[];
+  dateDisable: boolean;
 };
 
 export default function BookForm({
@@ -33,6 +35,8 @@ export default function BookForm({
   onSubmit,
   handleBack,
   form,
+  dateList,
+  dateDisable
 }: bookFormProps) {
   // if(pickup && pickup !== "Accra(Circle)") {
   //   date = "Saturday (26/04/2025)";
@@ -209,9 +213,9 @@ export default function BookForm({
                     <Dropdown
                       onChangeHandler={field.onChange}
                       value={field.value}
-                      items={["Friday (05/09/2025)", "Saturday (06/09/2025)", "Sunday (07/09/2025)"]}
+                      items={dateList}
                       placeholder="Date"
-                      disabled={isSubmitting} // Disable during submission
+                      disabled={isSubmitting || dateDisable} // Disable during submission
                     />
                   </FormControl>
                   <FormMessage />

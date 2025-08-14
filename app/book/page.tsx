@@ -96,6 +96,8 @@ export default function Book() {
   const [otherLocation, setOtherLocation] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [luggagePrice, setLuggagePrice] = useState<number>(0);
+  const [dateList, setDateList] = useState<string[]>([]);
+  const [dateDisable, setDateDisable] = useState<boolean>(false);
 
   const luggageList = [
   {
@@ -140,8 +142,8 @@ export default function Book() {
   },
   {
     id: "soundSystem",
-    label: "Sound System (+ GHS 60.00)",
-    price: 60,
+    label: "Sound System (+ GHS 100.00)",
+    price: 100,
   },
   {
     id: "tableAndChair",
@@ -196,11 +198,26 @@ const pickups = [
     }
   };
 
+  const temaDate = ["Saturday (06/09/2025)", "Sunday (07/09/2025)"];
+  const accraDate = ["Friday (05/09/2025)", "Saturday (06/09/2025)", "Sunday (07/09/2025)"];
+
   useEffect(() => {
     const pickupValue = form.watch("pickup");
     const dateValue = form.watch("date");
     const locationValue = form.watch("location");
     setSelectedSeats([]);
+
+    if (pickupValue === "Adenta" || pickupValue === "Cape Coast/Takoradi") {
+      form.setValue("date", "Saturday (06/09/2025)");
+      setDateDisable(true);
+    } else if (pickupValue === "Tema") {
+      setDateList(temaDate);
+      setDateDisable(false);
+    } else {
+      setDateList(accraDate);
+      setDateDisable(false);
+    }
+
     if (pickupValue && dateValue && locationValue) {
       fetchSeats(pickupValue, dateValue, locationValue);
     }
@@ -332,6 +349,8 @@ const pickups = [
             onSubmit={onSubmit}
             handleBack={handleBack}
             form={form}
+            dateList={dateList}
+            dateDisable={dateDisable}
           />
         )}
         {step === 1 && (
