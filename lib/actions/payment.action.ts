@@ -18,7 +18,7 @@ export async function initializeTransaction(email: string, busId: string, select
 
   const paystackUrl = 'https://api.paystack.co/transaction/initialize';
   const secretKey = process.env.PAYSTACK_SECRET_KEY;
-  const price = (pickups.includes(location))? 150:await getBusPrice(busId);
+  const price = (pickups.includes(location))? 153:await getBusPrice(busId);
   const totalLuggagePrice = await getLuggagePrice(luggage)
 
   const amount = ((price * selectedSeats.length * 100) + (totalLuggagePrice * 100)).toString()

@@ -53,7 +53,7 @@ const pickUps = () => {
               <p className="mt-2">KFC Adenta</p>
             </div>
           </Link>
-          <Link href="#">
+          <Link href="https://maps.app.goo.gl/V2junSABbUWiAV9TA?g_st=com.google.maps.preview.copy ">
             <div className={styles.cardPickup}>
             <Image
                 src="/assets/icons/pin_drop_green.png"
@@ -62,8 +62,21 @@ const pickUps = () => {
                 width={90}
                 height={90}
               />
-              <h3 className="text-xl font-semibold mt-4">Cape Coast/Tarkoradi</h3>
-              <p className="mt-2">KFC Adenta</p>
+              <h3 className="text-xl font-semibold mt-4">Cape Coast</h3>
+              <p className="mt-2">Pedu Junction</p>
+            </div>
+          </Link>
+          <Link href="https://maps.app.goo.gl/hjkMWsH5RVg2wUAw7?g_st=com.google.maps.preview.copy ">
+            <div className={styles.cardPickup}>
+            <Image
+                src="/assets/icons/pin_drop_green.png"
+                alt="pin_drop"
+                sizes="100vw"
+                width={90}
+                height={90}
+              />
+              <h3 className="text-xl font-semibold mt-4">Tarkoradi</h3>
+              <p className="mt-2">Tarkoradi Mall</p>
             </div>
           </Link>
         </div>

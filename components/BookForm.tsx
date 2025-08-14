@@ -103,18 +103,17 @@ export default function BookForm({
 
   const accraPickups = [
     "Achimota mall Bus Stop",
-    "Accra mall Bus Stop",
     "Amasaman",
     "Pokuase (Frimps Oil Filling Station)",
     "Ofankor Barrier",
-    "Circle (So Fresh Filling Station)",
+    "Circle (VIP Station)",
     "Taifa Junction Bus Stop",
     "Nsawam (Total Filling Station)",
     "Medie",
     "Other",
   ];
   const temaPickups = ["Community 1 Station", "Ashaiman Overhead", "Other"];
-  const adentaPickups = ["Adenta","Other"]
+  const adentaPickups = ["Accra mall Bus Stop","Okonglo Bus Stop","Madina Shell filling station","Adenta","Other"]
   const capeCoastPickups = ["Cape Coast", "Takoradi", "Other"];
 
   const prevPickupRef = useRef<string | undefined>(form.getValues("pickup"));

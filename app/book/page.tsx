@@ -179,7 +179,7 @@ const pickups = [
 
       setTakenSeats(bus?.takenSeats || []);
       if (pickups.includes(location)) {
-        setPrice(150);
+        setPrice(153);
       }else {
       setPrice(bus?.price || 0);}
       setBusId(bus?.busId);
