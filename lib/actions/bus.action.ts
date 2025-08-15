@@ -25,6 +25,7 @@ try {
     await dbConnect();
 
     // Shared segment handling
+    if (date !== "Friday (05/09/2025)") {
     if (pickups.includes(location)) {
 
         const temaBuses = await Bus.find({ pickup: "Tema", date });
@@ -50,6 +51,7 @@ try {
             pickup = "Accra";
         }
         // else: both full → leave pickup unchanged and let normal logic handle
+    }
     }
 
 
