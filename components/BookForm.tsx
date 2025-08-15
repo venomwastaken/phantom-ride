@@ -293,7 +293,9 @@ export default function BookForm({
                         "Nana Banyin",
                         "Raymond",
                         "Zerubabel",
-                        "Joshua"
+                        "Joshua",
+                        "GHANAMADEIT",
+                        "Emmanuel",
                       ]}
                       placeholder="Agent"
                       disabled={isSubmitting} // Disable during submission
