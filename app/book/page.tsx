@@ -211,7 +211,7 @@ const pickups = [
       form.setValue("date", "Saturday (06/09/2025)");
       setDateDisable(true);
     } else if (pickupValue === "Tema") {
-      form.setValue("date", "");
+      // form.setValue("date", "");
       setDateList(temaDate);
       setDateDisable(false);
     } else {
