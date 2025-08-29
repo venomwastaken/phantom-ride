@@ -75,6 +75,24 @@ export async function POST(request: Request) {
     if (computedSignature === predefinedSignature) {
       console.log('Signature matched successfully!');
 
+      const body = requestBody ? JSON.parse(requestBody) : {};
+      const { transaction_reference } = body;
+
+      const booking = await findBooking(transaction_reference);
+        const { reference, busId, seats, fullName, email, phone, tickets, status } = booking;
+        const name = fullName.split(' ')[0];
+
+        if (status === "pending") {
+          await updateSeats({ busId: busId, seatsToBook: seats.split(", ") });
+          await updateBookingStatus(reference);
+          await sendNotification({
+            name: name,
+            email: email,
+            phone: `233${phone.substring(1)}`,
+            tickets: tickets,
+        });
+        }
+
       return new Response(
         JSON.stringify({ message: ' SIGNATURE MATCHED SUCCESSFULLY!' }),
         {
