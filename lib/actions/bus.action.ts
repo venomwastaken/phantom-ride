@@ -129,3 +129,29 @@ export const getBusPrice = async (busId : string) => {
         console.error('Error getting bus price:', error);
     }
 }
+
+export const unselectSeats = async ({ busId, seatsToUnselect }: { busId: string, seatsToUnselect: string[] }) => {
+    try {
+        await dbConnect();
+        // Find and update the bus by busId
+        const updatedBus = await Bus.findOneAndUpdate(
+            { busId },
+            {
+                $pull: { takenSeats: { $in: seatsToUnselect } }, // Removes from takenSeats
+                $push: { availableSeats: { $each: seatsToUnselect } } // Adds to availableSeats
+            },
+            { new: true } // Return the updated document
+        );
+        if (!updatedBus) {
+            throw new Error('Bus not found');
+        }
+        // If bus was full and now has available seats, mark it as not full
+        if (updatedBus.isFull && updatedBus.availableSeats.length > 0) {
+            await Bus.findOneAndUpdate({ busId: updatedBus.busId }, { isFull: false });
+        }
+        //console.log('Seats unselected:', updatedBus);
+    } catch (error) {
+        console.error('Error unselecting seats:', error);
+    }
+};
+

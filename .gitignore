@@ -37,3 +37,6 @@ next-env.d.ts
 
 #archives
 .archives
+
+# Seat selection
+app/api/updateseats
