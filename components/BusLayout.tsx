@@ -146,7 +146,7 @@ export default function BusLayout({price, handleBack, onSubmit, data, luggagePri
         
           <p className="mt-[15px] text-xs text-gray-500 bold">
               Price: GHS {price !== null ? (price * selectedSeats.length).toFixed(2): 0.00}
-                 {/* + { luggagePrice !== null ? luggagePrice.toFixed(2): 0.00 }(luggage)*/}
+                  + { luggagePrice !== null ? luggagePrice.toFixed(2): 0.00 }(luggage)
               
           </p>
 
@@ -169,7 +169,7 @@ export default function BusLayout({price, handleBack, onSubmit, data, luggagePri
                 disabled={isSubmitting || selectedSeats.length === 0}
                 onClick={() => onSubmit(data)} // Dummy argument to match the expected function signature
               >
-                {/*isSubmitting ? "Submitting..." : "Book Ride"*/}Next
+                {/*isSubmitting ? "Submitting..." : "Book"*/}Book
               </button>
             </div>
         

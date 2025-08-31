@@ -97,7 +97,7 @@ export async function POST(request: Request) {
       }
 
       return new Response(
-        JSON.stringify({ message: ' SIGNATURE MATCHED SUCCESSFULLY!' }),
+        JSON.stringify({ message: ' SIGNATURE MATCHED SUCCESSFULLY!'}),
         {
           status: 200,
           headers: { 'Content-Type': 'application/json' },

@@ -260,35 +260,25 @@ const pickups = [
         busId: busId,
         seats: selectedSeats.toString(),
       });
-    } else {
-      setIsSubmitting(true);
-      setData({
-        ...data,
-        busId: busId,
-        seats: selectedSeats.toString(),
-        phoneNumber: values.phoneNumber,
-        network: values.network,
-      });
+    try {
+      // Initialize the transaction with Paystack
+      const result = await initializeTransaction(
+        data.email || "",
+        busId,
+        selectedSeats,
+        data.location || "",
+        data.luggage || [],
+      );
 
-      // console.log("Final Data:", data);
+      if (typeof window !== "undefined" && result && result.data) {
+        const { default: PaystackPop } = await import("@paystack/inline-js");
 
-      try {
-        await initializePayment({
+        // Create the booking on your server before payment
+        const bookingData = {
+          ...data,
+          reference: result.data.data.reference,
           busId: busId,
-          luggage: data.luggage ?? [],
-          phoneNumber: values.phoneNumber ?? "",
-          networkBankCode:
-            values.network === "MTN"
-              ? "MTN"
-              : values.network === "Telecel Gh"
-              ? "VOD"
-              : "AIR",
-          email: data.email ?? "",
-          firstName: (data.fullName ?? "").split(" ")[0],
-          lastName: (data.fullName ?? "").split(" ").slice(-1)[0],
-          selectedSeats: data.seats ?? "",
-          reference: data.reference ?? "",
-        });
+        };
 
         // Send booking data to the server to create a pending booking via the API route
         const response = await fetch("/api/book", {
@@ -296,16 +286,24 @@ const pickups = [
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify({...bookingData, seats: selectedSeats.join(", ")}),
         });
 
         if (!response.ok) {
+          console.log(response);
           throw new Error("Booking creation failed");
+          
         }
 
         const bookingResponse = await response.json();
         console.log("Booking Response:", bookingResponse);
 
+        // Open Paystack popup for payment
+        const popup = new PaystackPop();
+        popup.resumeTransaction(result.data.data.access_code);
+          } else {
+        throw new Error("Transaction initialization failed");
+      }
       } catch (error) {
         console.error("Error:", error);
       } finally {
@@ -366,7 +364,7 @@ const pickups = [
             />
           </div>
         )}
-        {step === 3 && (
+        {/*step === 3 && (
           <div className="px-auto py-0 w-full">
             <PayDialog
               paymentForm={paymentForm}
@@ -378,7 +376,7 @@ const pickups = [
               isSubmitting={isSubmitting}
             />
           </div>
-        )}
+        )*/}
       </div>
     </>
   );
