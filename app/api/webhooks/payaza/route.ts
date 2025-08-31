@@ -76,9 +76,9 @@ export async function POST(request: Request) {
       console.log('Signature matched successfully!');
 
       const body = requestBody ? JSON.parse(requestBody) : {};
-      const { transaction_reference } = body;
-
-      const booking = await findBooking(transaction_reference);
+      const { transaction_reference, status } = body;
+      if (status === "Completed") {
+        const booking = await findBooking(transaction_reference);
         const { reference, busId, seats, fullName, email, phone, tickets, status } = booking;
         const name = fullName.split(' ')[0];
 
@@ -92,6 +92,9 @@ export async function POST(request: Request) {
             tickets: tickets,
         });
         }
+      } else {
+        console.log("transaction not completed", status)
+      }
 
       return new Response(
         JSON.stringify({ message: ' SIGNATURE MATCHED SUCCESSFULLY!' }),
