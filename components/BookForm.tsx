@@ -166,7 +166,7 @@ export default function BookForm({
                     <Dropdown
                       onChangeHandler={field.onChange}
                       value={field.value}
-                      items={["Accra", "Tema", "Adenta", "Cape Coast/Takoradi"]}
+                      items={["Accra", "Tema", "Adenta"]}
                       placeholder="Select a bus"
                       disabled={isSubmitting} // Disable during submission
                     />

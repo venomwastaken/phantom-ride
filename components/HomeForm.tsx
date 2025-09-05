@@ -27,7 +27,7 @@ const HomeForm = () => {
   const [isPickUpDisabled, setIsPickUpDisabled] = useState<boolean>(true);
 
   const temaDate = ["Saturday (06/09/2025)", "Sunday (07/09/2025)"];
-  const accraDate = ["Friday (05/09/2025)", "Saturday (06/09/2025)", "Sunday (07/09/2025)"];
+  const accraDate = ["Saturday (06/09/2025)", "Sunday (07/09/2025)"];
 
   useEffect(() => {
     const pickupValue = form.watch("pickup");
@@ -78,7 +78,7 @@ const HomeForm = () => {
                   <Dropdown
                     onChangeHandler={field.onChange}
                     value={field.value}
-                    items={["Accra", "Tema", "Adenta", "Cape Coast/Takoradi"]}
+                    items={["Accra", "Tema", "Adenta"]}
                     placeholder="Select a bus"
                   />
                 </FormControl>

@@ -35,7 +35,7 @@ export default function Book() {
 
   const initialVals = {
     pickup: pickup ? pickup : "Accra",
-    date: date ? date : "Friday (05/09/2025)",
+    date: date ? date : "Saturday (06/09/2025)",
     fullName: "",
     email: "",
     phone: "",
@@ -199,7 +199,7 @@ const pickups = [
   };
 
   const temaDate = ["Saturday (06/09/2025)", "Sunday (07/09/2025)"];
-  const accraDate = ["Friday (05/09/2025)", "Saturday (06/09/2025)", "Sunday (07/09/2025)"];
+  const accraDate = ["Saturday (06/09/2025)", "Sunday (07/09/2025)"];
 
   useEffect(() => {
     const pickupValue = form.watch("pickup");
