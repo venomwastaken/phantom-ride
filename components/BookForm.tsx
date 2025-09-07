@@ -380,8 +380,8 @@ export default function BookForm({
                 type="submit"
                 className={`${
                   isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-                } button`}
-                disabled={isSubmitting}
+                } button disabled:opacity-50 disabled:cursor-not-allowed`}
+                disabled={true}
               >
                 {/*isSubmitting ? "Submitting..." : "Book Ride"*/}Next
               </button>
