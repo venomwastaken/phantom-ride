@@ -75,8 +75,8 @@ const pickUps = () => {
                 width={90}
                 height={90}
               />
-              <h3 className="text-xl font-semibold mt-4">Tarkoradi</h3>
-              <p className="mt-2">Tarkoradi Mall</p>
+              <h3 className="text-xl font-semibold mt-4">Takoradi</h3>
+              <p className="mt-2">Takoradi Mall</p>
             </div>
           </Link>
         </div>
