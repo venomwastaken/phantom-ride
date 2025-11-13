@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { addMail } from "@/lib/actions/mail.action";
+import { Input } from "./ui/input";
 
 // Define the schema
 const mailFormSchema = z.object({
@@ -47,19 +48,17 @@ export default function MailForm() {
       ) : (
         <Form {...form}>
           <h2 className="h2 bold">Subscribe to our newsletter</h2>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex w-full flex-grow gap-3"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)}
+            className="flex gap-2">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem className="w-full">
+                <FormItem className="flex-grow">
                   <FormControl>
-                    <input
+                    <Input
                       placeholder="Enter your email"
-                      className="max-w-full w-full"
+                      className="input bg-white !mt-0"
                       {...field}
                     />
                   </FormControl>
@@ -67,7 +66,9 @@ export default function MailForm() {
                 </FormItem>
               )}
             />
-            <button className="button" type="submit">Submit</button>
+            <button className="button" type="submit">
+              Submit
+            </button>
           </form>
         </Form>
       )}

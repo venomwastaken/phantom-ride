@@ -146,7 +146,7 @@ button:hover, .button:hover {
     padding: 5vh 5vw;
   }
 
-  input, .input {
+  .input {
     width: 100%;
     max-width:70%;
     font-size: 14px;
