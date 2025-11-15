@@ -2,7 +2,7 @@
 
 
 import { dbConnect } from "../database"
-import Booking from "../database/models/booking.model"
+import Booking, { IBooking } from "../database/models/booking.model"
 import { handleError } from "../utils"
 
 type BookingProps = {
@@ -22,10 +22,10 @@ type BookingProps = {
     status?:string,
   };
 
-export const makeBooking = async (booking: BookingProps) => {
+export const makeBooking = async (booking: IBooking) => {
 try {
     await dbConnect();
-    const tickets = [booking.seats.split(", ").map((seatNumber) => `${booking.busId}${seatNumber}`)]
+    const tickets = [booking.seats.map((seatNumber) => `${booking.busId}${seatNumber}`)]
     const newbooking = await Booking.create({...booking, tickets: tickets.join(", "), luggage: booking.luggage.join(", ")});
     return JSON.parse(JSON.stringify(newbooking));
     

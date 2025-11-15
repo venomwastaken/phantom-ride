@@ -91,7 +91,7 @@ export default function LuggageForm({
         ...prevCounts,
         [itemId]: Math.max(
           itemId === "extraBags" ? 3 : 1,
-          Math.min(9, (prevCounts[itemId] || 1) + adjustment)
+          Math.min(9, (prevCounts[itemId] || (itemId === "extraBags"? 3: 1)) + adjustment)
         ),
       }));
     },
@@ -170,7 +170,7 @@ export default function LuggageForm({
                               >
                                 <Input
                                   id={`${item.id}-quantity`}
-                                  value={counts[item.id] || 1}
+                                  value={counts[item.id] || (item.id === "extraBags"? 3: 1)}
                                   onChange={(e) =>
                                     handleCountChange(item.id, e)
                                   }

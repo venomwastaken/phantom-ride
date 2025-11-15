@@ -8,78 +8,99 @@ function generateBusId(terminalCode: string, busCount: number, day: string): str
     return `${terminalCode}${day}${busCount.toString().padStart(3, '0')}`;
   }
 
+function generateAllSeats(totalSeats: number) {
+  return Array.from({ length: totalSeats }, (_, i) =>
+    String(i + 1).padStart(2, "0")
+  );
+}
+
 export const getSeats = async ({pickup, date, location} : {pickup: string, date: string, location: string}) => {
+    const pickups = [
+        "Amasaman",
+        "Pokuase (Frimps Oil Filling Station)",
+        "Ofankor Barrier",
+        "Taifa Junction Bus Stop",
+        "Nsawam (Total Filling Station)",
+        "Medie"
+    ];
 
-const pickups = [
-    "Amasaman",
-    "Pokuase (Frimps Oil Filling Station)",
-    "Ofankor Barrier",
-    "Taifa Junction Bus Stop",
-    "Nsawam (Total Filling Station)",
-    "Medie"
-  ];
 
+    //if(date === "Sunday (27/04/2025)"){pickup = "Accra(Circle)";}
+    try {
+        await dbConnect();
 
-//if(date === "Sunday (27/04/2025)"){pickup = "Accra(Circle)";}
-try {
-    await dbConnect();
+        // Shared segment handling
+        if (date !== "Friday (05/09/2025)") {
+        if (pickups.includes(location)) {
 
-    // Shared segment handling
-    if (date !== "Friday (05/09/2025)") {
-    if (pickups.includes(location)) {
+            const temaBuses = await Bus.find({ pickup: "Tema", date });
+            const accraBuses = await Bus.find({ pickup: "Accra", date });
 
-        const temaBuses = await Bus.find({ pickup: "Tema", date });
-        const accraBuses = await Bus.find({ pickup: "Accra", date });
+            const temaAvailable = temaBuses.filter(b => b.takenSeats.lenght < b.totalSeats);
+            const accraAvailable = accraBuses.filter(b => b.takenSeats.lenght < b.totalSeats);
 
-        const temaAvailable = temaBuses.filter(b => !b.isFull);
-        const accraAvailable = accraBuses.filter(b => !b.isFull);
+            // If both are fully booked, just skip to normal logic
+            if (temaAvailable.length && accraAvailable.length) {
+                const temaTaken = temaAvailable[0].takenSeats;
+                const accraTaken = accraAvailable[0].takenSeats;
 
-        // If both are fully booked, just skip to normal logic
-        if (temaAvailable.length && accraAvailable.length) {
-            const temaTaken = temaAvailable[0].takenSeats;
-            const accraTaken = accraAvailable[0].takenSeats;
-
-            // Choose the less loaded bus, with your bias
-            if (temaTaken.length + 3 < accraTaken.length) {
+                // Choose the less loaded bus, with your bias
+                if (temaTaken.length + 3 < accraTaken.length) {
+                    pickup = "Tema";
+                } else {
+                    pickup = "Accra";
+                }
+            } else if (temaAvailable.length) {
                 pickup = "Tema";
-            } else {
+            } else if (accraAvailable.length) {
                 pickup = "Accra";
             }
-        } else if (temaAvailable.length) {
-            pickup = "Tema";
-        } else if (accraAvailable.length) {
-            pickup = "Accra";
+            // else: both full → leave pickup unchanged and let normal logic handle
         }
-        // else: both full → leave pickup unchanged and let normal logic handle
-    }
-    }
+        }
 
 
-    // if(date === "Sunday (27/04/2025)" && pickup === "Accra(Circle)") {
-    //     const bus = await Bus.findOne({ pickup: pickup, date: date}, { availableSeats: true, takenSeats: true, _id: true, price: true, busId:true });
-    //     const { availableSeats, takenSeats, _id, price, busId } = bus;
-    //     return { availableSeats, takenSeats, _id: _id.toString(), price, busId };
-    // }
+        // if(date === "Sunday (27/04/2025)" && pickup === "Accra(Circle)") {
+        //     const bus = await Bus.findOne({ pickup: pickup, date: date}, { availableSeats: true, takenSeats: true, _id: true, price: true, busId:true });
+        //     const { availableSeats, takenSeats, _id, price, busId } = bus;
+        //     return { availableSeats, takenSeats, _id: _id.toString(), price, busId };
+        // }
 
-    const bus = await Bus.findOne({ pickup: pickup, date: date, isFull: false}, { availableSeats: true, takenSeats: true, _id: true, price: true, busId:true });
-    if (bus) {
-        const { availableSeats, takenSeats, _id, price, busId } = bus;
-        return { availableSeats, takenSeats, _id: _id.toString(), price, busId };
-    } 
-    else {
-        const numberOfBuses = (await Bus.find({pickup:pickup, date:date})).length;
-        const terminalCode = (pickup==="Tema")? "TM":((pickup==="Adenta")? "AD":((pickup==="Cape Coast/Takoradi")? "CT":"AC"));
-        const day = (date==="Friday (05/09/2025)")? "FRI":((date==="Saturday (06/09/2025)")? "SAT":"SUN");
-        const newbusId = generateBusId(terminalCode, numberOfBuses + 1, day);
-        const { availableSeats, takenSeats, _id, price, busId} = await Bus.create({pickup: pickup, date: date, 
-            price: (pickup === "Accra")? 153:((pickup === "Tema")? 173: ((pickup === "Adenta")? 173: 173)), busId:newbusId });
-        return { availableSeats, takenSeats, _id: _id.toString(), price, busId};
+        const bus = await Bus.findOne({ 
+                                        pickup: pickup, 
+                                        date: date, 
+                                        $expr: {$lt: [{$size:"$takenSeats"}, "$totalSeats"]}
+                                    }, 
+                                    { 
+                                        totalSeats: true,
+                                        takenSeats: true, 
+                                        _id: true, 
+                                        price: true, 
+                                        busId:true 
+                                    });
+        if (bus) {
+            const { totalSeats, takenSeats, _id, price, busId } = bus;
+            return { totalSeats, takenSeats, _id: _id.toString(), price, busId };
+        } 
+        else {
+            const numberOfBuses = (await Bus.find({pickup:pickup, date:date})).length;
+            const terminalCode = (pickup==="Tema")? "TM":((pickup==="Adenta")? "AD":((pickup==="Cape Coast/Takoradi")? "CT":"AC"));
+            const day = (date==="Friday (05/09/2025)")? "FRI":((date==="Saturday (06/09/2025)")? "SAT":"SUN");
+            const newbusId = generateBusId(terminalCode, numberOfBuses + 1, day);
+            const { totalSeats, takenSeats, _id, price, busId} = await Bus.create(
+                {
+                    pickup: pickup, date: date, 
+                    price: (pickup === "Accra")? 153:((pickup === "Tema")? 173: ((pickup === "Adenta")? 173: 173)), 
+                    busId:newbusId 
+                });
+
+            return { totalSeats, takenSeats, _id: _id.toString(), price, busId};
+        }
+        
+    } catch (error) {
+        handleError(error);
+        return null;
     }
-    
-} catch (error) {
-    handleError(error);
-    return null;
-}
 }
 
 
@@ -88,29 +109,46 @@ try {
 export const updateSeats = async ({ busId, seatsToBook }: { busId: string, seatsToBook: string[] }) => {
     try {
         await dbConnect();
-        const {takenSeats, availableSeats} = await Bus.findOne({busId:busId}, {takenSeats: true, availableSeats: true});
-        if(takenSeats.includes(seatsToBook) && (availableSeats.length >= seatsToBook)) {
-            seatsToBook = availableSeats.slice(0, (seatsToBook.length+1));
+        const {taken, totalSeats} = await Bus.findOne({busId:busId}, {takenSeats: true, totalSeats: true});
+        const allSeats = generateAllSeats(totalSeats);
+
+        // STEP A — Identify seats already taken
+        const alreadyTaken = seatsToBook.filter(seat => taken.includes(seat));
+
+        // STEP B — Determine remaining seats needed
+        const seatsNeeded = seatsToBook.length;
+
+        // STEP C — Compute available seats
+        const availableSeats = allSeats.filter(seat => !taken.includes(seat));
+
+        if (availableSeats.length < seatsNeeded) {
+        throw new Error("Not enough seats available");
         }
 
-        // Find and update the bus by busId
-        const updatedBus = await Bus.findOneAndUpdate(
-            { busId }, 
-            {
-                $push: { takenSeats: { $each: seatsToBook } }, // Adds to takenSeats
-                $pull: { availableSeats: { $in: seatsToBook } } // Removes from availableSeats
-            },
-            { new: true } // Return the updated document
+        // STEP D — If some seats are taken, auto-replace them
+        let finalSeats = [];
+
+        if (alreadyTaken.length > 0) {
+            console.log("Seat(s) already taken:", alreadyTaken);
+
+            // Pick the next available seats
+            finalSeats = availableSeats.slice(0, seatsNeeded);
+        } else {
+            finalSeats = seatsToBook;
+        }
+
+        // STEP E — Update the bus atomically
+        await Bus.findOneAndUpdate(
+            { busId },
+            { $push: { takenSeats: { $each: finalSeats } } },
         );
 
-        if (!updatedBus) {
-            throw new Error('Bus not found');
-        }
-
-        // Check if all seats are taken and mark bus as full
-        if (updatedBus.availableSeats.length === 0) {
-            await Bus.findOneAndUpdate({ busId: updatedBus.busId }, { isFull: true });
-        }
+        return {
+            success: true,
+            seatsBooked: finalSeats,
+            autoReplaced: alreadyTaken.length > 0,
+            replacedSeats: alreadyTaken
+        };
 
         //console.log('Seats updated:', updatedBus);
 
@@ -138,17 +176,13 @@ export const unselectSeats = async ({ busId, seatsToUnselect }: { busId: string,
             { busId },
             {
                 $pull: { takenSeats: { $in: seatsToUnselect } }, // Removes from takenSeats
-                $push: { availableSeats: { $each: seatsToUnselect } } // Adds to availableSeats
             },
             { new: true } // Return the updated document
         );
         if (!updatedBus) {
             throw new Error('Bus not found');
         }
-        // If bus was full and now has available seats, mark it as not full
-        if (updatedBus.isFull && updatedBus.availableSeats.length > 0) {
-            await Bus.findOneAndUpdate({ busId: updatedBus.busId }, { isFull: false });
-        }
+
         //console.log('Seats unselected:', updatedBus);
     } catch (error) {
         console.error('Error unselecting seats:', error);
