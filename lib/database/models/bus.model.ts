@@ -19,7 +19,7 @@ const BusSchema: Schema = new Schema<IBus>({
   pickup: { type: String, required: true },
   date: {type: String, required: true},
 
-  totalSeats: {type: Number, required: true},
+  totalSeats: {type: Number, default: 34},
 
   takenSeats: {type: [String], default: []},
 

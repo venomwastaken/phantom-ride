@@ -30,7 +30,10 @@ export const formSchema = z.object({
   emergencyContactInfo: z.string().min(2, {
     message: "This field should not be epmty.",
   }),
-  luggage: z.array(z.string()),
+  luggage: z.array(z.object({
+    name: z.string(),
+    quantity: z.number()
+  })),
 })
 
 

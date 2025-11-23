@@ -1,6 +1,6 @@
 import { formSchema } from "@/lib/validator";
 import { MinusIcon, PlusIcon } from "lucide-react";
-import React, { use, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -85,6 +85,8 @@ export default function LuggageForm({
   isSubmitting,
 }: luggageFormProps) {
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [data, setData] = useState<{name: string, quantity: number}[]>([])
+
   const handleCountAdjustment = useCallback(
     (itemId: string, adjustment: number) => {
       setCounts((prevCounts) => ({
@@ -98,18 +100,15 @@ export default function LuggageForm({
     []
   );
 
-  const handleCountChange = React.useCallback(
-    (itemId: string, e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = parseInt(e.target.value, 10);
-      if (!isNaN(value) && value >= 1 && value <= 9) {
-        setCounts((prevCounts) => ({
-          ...prevCounts,
-          [itemId]: value,
-        }));
-      }
-    },
-    []
-  );
+ const toDict = useCallback(
+  (values: any, counts: Record<string, number> ) => {
+    for(const item in values.luggage ) {
+      setData(prevData => ([ ...prevData, {name: item, quantity: counts[item]} ]))
+    }
+    return data;
+  },
+  []
+ )
 
   return (
     <>
@@ -117,7 +116,7 @@ export default function LuggageForm({
         <div className={`${styles.cardForm}`}>
           <h2 className="bold text-xl">Luggage</h2>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit((values) => onSubmit(values))}
             className="form-container"
           >
             <FormField
@@ -144,13 +143,13 @@ export default function LuggageForm({
                           >
                             <FormControl>
                               <Checkbox
-                                checked={field.value?.includes(item.id)}
+                                checked={field.value?.some((item_obj: any) => item_obj.name === item.id)}
                                 onCheckedChange={(checked) => {
                                   return checked
-                                    ? field.onChange([...field.value, item.id])
+                                    ? field.onChange([...field.value, { name: item.id, quantity: counts[item.id] || (item.id === "extraBags" ? 3 : 1) }])
                                     : field.onChange(
                                         field.value?.filter(
-                                          (value) => value !== item.id
+                                          (value: any) => value.name !== item.id
                                         )
                                       );
                                 }}
@@ -163,24 +162,14 @@ export default function LuggageForm({
                             <div className="flex flex-1 justify-end">
                               <ButtonGroup
                                 className={`${
-                                  field.value?.includes(item.id)
+                                  field.value?.some((item_obj: any) => item_obj.name === item.id)
                                     ? ""
                                     : "opacity-0"
                                 }`}
                               >
-                                <Input
-                                  id={`${item.id}-quantity`}
-                                  value={counts[item.id] || (item.id === "extraBags"? 3: 1)}
-                                  onChange={(e) =>
-                                    handleCountChange(item.id, e)
-                                  }
-                                  size={3}
-                                  className="h-8 !w-12 text-sm"
-                                  maxLength={2}
-                                />
                                 <Button
                                   variant="outline"
-                                  className="h-8 w-10"
+                                  className="h-8 w-8"
                                   type="button"
                                   aria-label="Decrement"
                                   onClick={() =>
@@ -188,11 +177,20 @@ export default function LuggageForm({
                                   }
                                   disabled={(counts[item.id] || 1) <= 1}
                                 >
-                                  <MinusIcon />
+                                  <MinusIcon className="text-muted-foreground" style={{height: "14px", width: "14px"}} strokeWidth={2.5}/>
                                 </Button>
+                                <Input
+                                  id={`${item.id}-quantity`}
+                                  value={counts[item.id] || (item.id === "extraBags"? 3: 1)}
+                                  size={3}
+                                  className="h-8 !w-8 text-[13px] font-medium text-muted-foreground"
+                                  maxLength={2}
+                                  readOnly={true}
+                                />
+                                
                                 <Button
                                   variant="outline"
-                                  className="h-8 w-10"
+                                  className="h-8 w-8"
                                   type="button"
                                   aria-label="Increment"
                                   onClick={() =>
@@ -200,7 +198,7 @@ export default function LuggageForm({
                                   }
                                   disabled={(counts[item.id] || 1) >= 9}
                                 >
-                                  <PlusIcon />
+                                  <PlusIcon className="text-muted-foreground" style={{height: "14px", width: "14px"}} strokeWidth={2.5}/>
                                 </Button>
                               </ButtonGroup>
                             </div>

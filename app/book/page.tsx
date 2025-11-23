@@ -69,10 +69,10 @@ export default function Book() {
     phoneNumber?: string;
     network?: string;
     busId?: string;
-    seats?: string;
+    seats?: string[];
     agent?: string;
     emergencyContactInfo?: string;
-    luggage?: string[];
+    luggage?: {name: string, quantity: number }[];
     reference?: string;
     // add other fields as needed
   };
@@ -86,7 +86,7 @@ export default function Book() {
     phoneNumber: "",
     network: "",
     busId: "",
-    seats: "",
+    seats: [],
     agent: "",
     emergencyContactInfo: "",
     luggage: [],
@@ -225,7 +225,7 @@ const pickups = [
   }, [form.watch("pickup"), form.watch("date"), form.watch("location")]);
 
   const onSubmit = async (
-    values: BookingData /*z.infer<typeof formSchema>*/
+    values: BookingData, /*z.infer<typeof formSchema>*/
   ) => {
     values.location = isOther ? `Other: ${otherLocation}` : values.location;
     const reference = generateReference();
@@ -243,23 +243,24 @@ const pickups = [
         ...data,
         ...values
       });
+      
 
-      setLuggagePrice(0);
-      (values.luggage ?? []).map((item) => {
-        const luggageItem = luggageList.find((l) => l.id === item);
-        if (luggageItem) {
-          setLuggagePrice((prev) => prev + luggageItem.price);
-        }
-      }
-      );
+      // setLuggagePrice(0);
+      // (values.luggage ?? []).map((item) => {
+      //   const luggageItem = luggageList.find((l) => l.id === item);
+      //   if (luggageItem) {
+      //     setLuggagePrice((prev) => prev + luggageItem.price);
+      //   }
+      // }
+      // );
+
+      let totalLuggagePrice = 0;
 
     } else if (step === 2) {
       setStep(step + 1);
-      setData({
-        ...data,
-        busId: busId,
-        seats: selectedSeats.toString(),
-      });
+      setData(
+        prev => ({...prev, seats: selectedSeats, busId})
+      );
     try {
       // Initialize the transaction with Paystack
       const result = await initializeTransaction(
@@ -278,6 +279,7 @@ const pickups = [
           ...data,
           reference: result.data.data.reference,
           busId: busId,
+          seats: selectedSeats,
         };
 
         // Send booking data to the server to create a pending booking via the API route
@@ -286,7 +288,7 @@ const pickups = [
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({...bookingData, seats: selectedSeats.join(", ")}),
+          body: JSON.stringify(bookingData),
         });
 
         if (!response.ok) {
