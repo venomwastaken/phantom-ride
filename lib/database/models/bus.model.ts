@@ -2,7 +2,6 @@ import{ Schema, models, model } from 'mongoose';
 
 
 export interface IBus extends Document {
-  _id: string,
   busId: string;
   pickup: string;
   date: string;

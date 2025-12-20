@@ -1,7 +1,6 @@
 import { Schema, Document, model, models } from "mongoose";
 
 export interface ILuggagePrice extends Document {
-  _id: string;
   name: string;
   price: number;
 }
