@@ -1,7 +1,6 @@
 import { Schema, Document, model, models } from "mongoose";
 
 export interface IMailingList extends Document {
-  _id: string;
   email: string;
 }
 
