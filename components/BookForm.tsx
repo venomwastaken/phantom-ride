@@ -151,7 +151,7 @@ export default function BookForm({
   return (
     <>
       <Form {...form}>
-        <div className={`${styles.cardForm}`}>
+        <div>
           <h2 className="mb-5 bold text-xl">Book a ride</h2>
           <form
             onSubmit={form.handleSubmit(onSubmit)}

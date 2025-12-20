@@ -15,6 +15,7 @@ import PayDialog from "@/components/PayDialog";
 import { initializePayment } from "@/lib/actions/paymentPayaza.actions";
 import LuggageForm from "@/components/LuggageForm";
 import { initializeTransaction } from "@/lib/actions/payment.action";
+import Test from "@/components/Test";
 
 export default function Book() {
   const {
@@ -39,10 +40,12 @@ export default function Book() {
     fullName: "",
     email: "",
     phone: "",
-    seats: "",
+    seats: [],
     agent: "",
     emergencyContactInfo: "",
-    luggage: [],
+    luggage: [
+      { name: "", quantity: 0 }
+    ],
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -245,16 +248,14 @@ const pickups = [
       });
       
 
-      // setLuggagePrice(0);
-      // (values.luggage ?? []).map((item) => {
-      //   const luggageItem = luggageList.find((l) => l.id === item);
-      //   if (luggageItem) {
-      //     setLuggagePrice((prev) => prev + luggageItem.price);
-      //   }
-      // }
-      // );
-
-      let totalLuggagePrice = 0;
+      setLuggagePrice(
+        (values.luggage ?? []).reduce((total, item) => {
+          const found = luggageList.find(l => l.id === item?.name);
+          const unitPrice = found?.price ?? 0;
+          const qty = item?.quantity ?? 0;
+          return total + unitPrice * qty;
+        }, 0)
+      );
 
     } else if (step === 2) {
       setStep(step + 1);
@@ -346,7 +347,7 @@ const pickups = [
         )}
         {step === 1 && (
           <div className="px-auto py-0 w-full">
-            <LuggageForm
+            <Test
               isSubmitting={isSubmitting}
               form={form}
               onSubmit={onSubmit}

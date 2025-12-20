@@ -1,7 +1,7 @@
 import { formSchema } from "@/lib/validator";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import React, { useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import {
   Form,
@@ -85,30 +85,53 @@ export default function LuggageForm({
   isSubmitting,
 }: luggageFormProps) {
   const [counts, setCounts] = useState<Record<string, number>>({});
-  const [data, setData] = useState<{name: string, quantity: number}[]>([])
+
+  const {fields, append, remove} = useFieldArray({
+    control: form.control,
+    name: "luggage",
+  });
+
+  const currentItemIds = useWatch({
+    control: form.control,
+    name: "luggage",
+  }).map(item => item.name);
 
   const handleCountAdjustment = useCallback(
     (itemId: string, adjustment: number) => {
-      setCounts((prevCounts) => ({
-        ...prevCounts,
-        [itemId]: Math.max(
+      const currentQuantity = form.getValues(`luggage`).find((it: any) => it.name === itemId)?.quantity || (itemId === "extraBags" ? 3 : 1);
+      const newQuantity =  Math.max(
           itemId === "extraBags" ? 3 : 1,
-          Math.min(9, (prevCounts[itemId] || (itemId === "extraBags"? 3: 1)) + adjustment)
+          Math.min(9, currentQuantity + adjustment)
+        );
+      form.setValue( "luggage",
+        form.getValues("luggage").map((it: any) =>
+          it.name === itemId ? { ...it, quantity: newQuantity } : it
         ),
-      }));
+        { shouldValidate: true, shouldDirty: true }
+      )
     },
     []
   );
+  // sync initial selected luggage quantities into local counts and keep form values in sync with counts
+  React.useEffect(() => {
+    const initial = form.getValues?.("luggage") || [];
+    const initCounts = initial.reduce<Record<string, number>>((acc, it: any) => {
+      acc[it.name] = it.quantity ?? (it.name === "extraBags" ? 3 : 1);
+      return acc;
+    }, {});
+    if (Object.keys(initCounts).length) setCounts(prev => ({ ...prev, ...initCounts }));
+  }, [form]);
 
- const toDict = useCallback(
-  (values: any, counts: Record<string, number> ) => {
-    for(const item in values.luggage ) {
-      setData(prevData => ([ ...prevData, {name: item, quantity: counts[item]} ]))
-    }
-    return data;
-  },
-  []
- )
+  React.useEffect(() => {
+    const luggage = form.getValues?.("luggage") || [];
+    if (!luggage.length) return;
+    const updated = luggage.map((it: any) => ({
+      ...it,
+      quantity: counts[it.name] ?? it.quantity ?? (it.name === "extraBags" ? 3 : 1),
+    }));
+    form.setValue("luggage", updated, { shouldValidate: true, shouldDirty: true });
+  }, [counts, form]);
+
 
   return (
     <>
@@ -130,83 +153,87 @@ export default function LuggageForm({
                       luggage
                     </FormDescription>
                   </div>
-                  {luggageList.map((item) => (
-                    <FormField
-                      key={item.id}
-                      control={form.control}
-                      name="luggage"
-                      render={({ field }) => {
-                        return (
-                          <FormItem
-                            key={item.id}
-                            className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 mb-2"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.some((item_obj: any) => item_obj.name === item.id)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([...field.value, { name: item.id, quantity: counts[item.id] || (item.id === "extraBags" ? 3 : 1) }])
-                                    : field.onChange(
-                                        field.value?.filter(
-                                          (value: any) => value.name !== item.id
-                                        )
-                                      );
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="text-sm font-normal ">
-                              {item.label}
-                              <span className="text-[10px] font-bold bg-[#E0E0E0] ml-2 py-1 px-2 rounded-full text-[#3D3D3D]">+{item.price}</span>
-                            </FormLabel>
-                            <div className="flex flex-1 justify-end">
-                              <ButtonGroup
-                                className={`${
-                                  field.value?.some((item_obj: any) => item_obj.name === item.id)
-                                    ? ""
-                                    : "opacity-0"
-                                }`}
-                              >
-                                <Button
-                                  variant="outline"
-                                  className="h-8 w-8"
-                                  type="button"
-                                  aria-label="Decrement"
-                                  onClick={() =>
-                                    handleCountAdjustment(item.id, -1)
-                                  }
-                                  disabled={(counts[item.id] || 1) <= 1}
-                                >
-                                  <MinusIcon className="text-muted-foreground" style={{height: "14px", width: "14px"}} strokeWidth={2.5}/>
-                                </Button>
-                                <Input
-                                  id={`${item.id}-quantity`}
-                                  value={counts[item.id] || (item.id === "extraBags"? 3: 1)}
-                                  size={3}
-                                  className="h-8 !w-8 text-[13px] font-medium text-muted-foreground"
-                                  maxLength={2}
-                                  readOnly={true}
+                  {luggageList.map((item) => {
+                    const isSelected = currentItemIds.includes(item.id)
+
+                    return (
+                      <FormField
+                        key={item.id}
+                        control={form.control}
+                        name="luggage"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={item.id}
+                              className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 mb-2"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.some((item_obj: any) => item_obj.name === item.id)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...field.value, { name: item.id, quantity: counts[item.id] || (item.id === "extraBags" ? 3 : 1) }])
+                                      : field.onChange(
+                                          field.value?.filter(
+                                            (value: any) => value.name !== item.id
+                                          )
+                                        );
+                                  }}
                                 />
-                                
-                                <Button
-                                  variant="outline"
-                                  className="h-8 w-8"
-                                  type="button"
-                                  aria-label="Increment"
-                                  onClick={() =>
-                                    handleCountAdjustment(item.id, 1)
-                                  }
-                                  disabled={(counts[item.id] || 1) >= 9}
+                              </FormControl>
+                              <FormLabel className="text-sm font-normal ">
+                                {item.label}
+                                <span className="text-[10px] font-bold bg-[#E0E0E0] ml-2 py-1 px-2 rounded-full text-[#3D3D3D]">+{item.price}</span>
+                              </FormLabel>
+                              <div className="flex flex-1 justify-end">
+                                <ButtonGroup
+                                  className={`${
+                                    field.value?.some((item_obj: any) => item_obj.name === item.id)
+                                      ? ""
+                                      : "opacity-0"
+                                  }`}
                                 >
-                                  <PlusIcon className="text-muted-foreground" style={{height: "14px", width: "14px"}} strokeWidth={2.5}/>
-                                </Button>
-                              </ButtonGroup>
-                            </div>
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  ))}
+                                  <Button
+                                    variant="outline"
+                                    className="h-8 w-8"
+                                    type="button"
+                                    aria-label="Decrement"
+                                    onClick={() =>
+                                      handleCountAdjustment(item.id, -1)
+                                    }
+                                    disabled={(counts[item.id] || 1) <= 1}
+                                  >
+                                    <MinusIcon className="text-muted-foreground" style={{height: "14px", width: "14px"}} strokeWidth={2.5}/>
+                                  </Button>
+                                  <Input
+                                    id={`${item.id}-quantity`}
+                                    value={counts[item.id] || (item.id === "extraBags"? 3: 1)}
+                                    size={3}
+                                    className="h-8 !w-8 text-[13px] font-medium text-muted-foreground"
+                                    maxLength={2}
+                                    readOnly={true}
+                                  />
+                                  
+                                  <Button
+                                    variant="outline"
+                                    className="h-8 w-8"
+                                    type="button"
+                                    aria-label="Increment"
+                                    onClick={() =>
+                                      handleCountAdjustment(item.id, 1)
+                                    }
+                                    disabled={(counts[item.id] || 1) >= 9}
+                                  >
+                                    <PlusIcon className="text-muted-foreground" style={{height: "14px", width: "14px"}} strokeWidth={2.5}/>
+                                  </Button>
+                                </ButtonGroup>
+                              </div>
+                            </FormItem>
+                          );
+                        }}
+                      />
+                    )
+                  })}
                   <FormMessage />
                 </FormItem>
               )}
