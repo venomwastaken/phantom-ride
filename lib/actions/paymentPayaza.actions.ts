@@ -5,7 +5,7 @@ import { getLuggagePrice } from "./luggage.actions";
 
 type Data = {
     busId: string,
-    luggage: string[],
+    luggage: {name: string, quantity: number}[],
     phoneNumber : string,
     networkBankCode : string,
     email : string,
@@ -19,7 +19,7 @@ export async function initializePayment({busId, luggage, phoneNumber, networkBan
     const price = await getBusPrice(busId);
     const totalLuggagePrice = await getLuggagePrice(luggage)
 
-    const amount = ((Number(price) * selectedSeats.split(", ").length) + totalLuggagePrice);
+    const amount = price + totalLuggagePrice;
     //console.log("Initializing payment with amount:", amount, "and reference:", reference);
     //sample request body:
     console.log({
